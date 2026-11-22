@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>羊羊老師｜楊勝銘</title>
+<meta name="description" content="羊羊老師（楊勝銘）：英文與才藝老師、魔術師、喜劇演員。教學、課程與師資培訓、表演作品。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* VOICE  專業的講者介紹頁：沉穩、乾淨，作品一直在長。
+   IDEA   講者簡介＋作品看板：上半是名片，下半是一張張可以點進去的作品卡。
+   PICTURE 首屏右側一路延伸到螢幕邊緣的形象大照片；作品卡封面沒有照片時，自動排出分類色的文字封面。
+   COLOUR AND TYPE 白底、炭灰文字、一個正紅點綴；名字用霞鶩文楷，其他用思源黑體。
+   LAYOUT 筆電：左文右圖、三欄作品牆；手機：滿版照片上滑出名片、作品第一張大卡其餘清單。 */
+:root{color-scheme:light dark;
+  --bg:light-dark(#ffffff,#16171a);--soft:light-dark(#f5f5f4,#1f2024);--ink:light-dark(#23262d,#eeeef0);
+  --muted:light-dark(#5d6169,#a9acb3);--line:light-dark(#e7e7e4,#2e3036);--accent:light-dark(#c0182f,#ff6b7d);
+  --btn:light-dark(#23262d,#eeeef0);--btnink:light-dark(#ffffff,#16171a);--ph:light-dark(#ececea,#26272c);--phink:light-dark(#6a6d74,#9a9ca3)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 "Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;overflow-x:clip}
+h1,h2,h3{margin:0;line-height:1.2;text-wrap:balance}
+.hand{font-family:"LXGW WenKai TC","Kaiti TC","DFKai-SB",serif;font-weight:700}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 max(4vw,20px)}
+[hidden]{display:none!important}
+/* 頂部列 */
+.bar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:8px;min-height:68px}
+.bar .me{font-size:24px;color:var(--ink);text-decoration:none;margin-right:auto}
+.bar nav{display:flex;align-items:center;gap:2px;flex-wrap:wrap}
+.bar nav a{color:var(--ink);text-decoration:none;padding:10px 14px;border-radius:8px;font-size:16px}
+.bar nav a:hover{background:var(--soft)}
+.bar nav a.cta{background:var(--accent);color:#fff;font-weight:700;margin-left:6px}
+.bar nav a.cta:hover{filter:brightness(.92)}
+/* 首屏 */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);min-height:min(760px,calc(100vh - 68px))}
+.intro{padding:clamp(40px,6vw,88px) clamp(24px,4vw,56px) 48px max(4vw,20px);display:flex;flex-direction:column;justify-content:center;max-width:680px;margin-left:auto;width:100%}
+.intro h1{font-size:clamp(56px,6.4vw,88px);line-height:1.05}
+.intro .who{margin:12px 0 0;font-size:20px;color:var(--muted)}
+.intro .lead{margin:26px 0 32px;font-size:19px;line-height:1.8;max-width:30em}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;min-height:50px;padding:0 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:16px}
+.btn.solid{background:var(--btn);color:var(--btnink)}.btn.line{border:1.5px solid var(--ink);color:var(--ink)}
+.btn.solid:hover{filter:brightness(1.15)}.btn.line:hover{background:var(--soft)}
+.nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:48px;padding-top:22px;border-top:1px solid var(--line)}
+.nums b{display:block;font-size:30px;font-weight:900;line-height:1.2;white-space:nowrap}
+.nums span{font-size:14px;color:var(--muted)}
+.photo{position:relative;margin:0;overflow:hidden;background:var(--ph)}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ph{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--phink);font-size:15px;padding:20px}
+.ph svg{display:block;margin:0 auto 10px;width:40px;height:40px}
+/* 單位列 */
+.orgs{background:var(--soft)}
+.orgs .wrap{display:flex;align-items:center;gap:12px 28px;padding-top:26px;padding-bottom:26px;flex-wrap:wrap}
+.orgs .lab{font-size:15px;color:var(--muted)}
+.orgs ul{display:flex;flex-wrap:wrap;gap:8px 26px;margin:0;padding:0;list-style:none;font-weight:700;font-size:17px;color:var(--muted)}
+/* 區塊 */
+.sec{padding:clamp(56px,7vw,96px) 0}
+.sec h2{font-size:clamp(32px,4vw,44px);margin-bottom:28px}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.head h2{margin:0}
+.more{font-weight:700;text-decoration:none;font-size:16px;padding:10px 0}
+.more:hover{text-decoration:underline}
+.do{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+.do .photo{aspect-ratio:4/3;border-radius:10px}
+.do h3{font-size:24px;font-weight:900;margin:18px 0 6px}
+.do p{margin:0;color:var(--muted)}
+/* 篩選標籤 */
+.pills{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px}
+.pills button{min-height:44px;padding:0 20px;border-radius:999px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:500 16px "Noto Sans TC",sans-serif;cursor:pointer}
+.pills button:hover{border-color:var(--ink)}
+.pills button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--bg);font-weight:700}
+/* 作品卡 */
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+.card{display:flex;flex-direction:column;background:var(--bg);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .25s ease,box-shadow .25s ease}
+.card:hover{transform:translateY(-4px);box-shadow:0 18px 36px -22px rgba(0,0,0,.35)}
+.cover{position:relative;aspect-ratio:16/10;overflow:hidden;color:#fff}
+.cover img{width:100%;height:100%;object-fit:cover;display:block}
+.gen{position:absolute;inset:0;padding:22px 24px;display:flex;flex-direction:column;justify-content:space-between}
+.gen small{font-size:13px;opacity:.85}
+.gen strong{font-family:"LXGW WenKai TC","Kaiti TC",serif;font-size:clamp(24px,2.3vw,32px);line-height:1.2;max-width:12em}
+.gen i{position:absolute;right:-18px;bottom:-40px;font:900 170px/1 "Noto Sans TC",sans-serif;opacity:.12;font-style:normal}
+.card .meta{padding:18px 22px 22px}
+.cat{font-size:14px;font-weight:700;color:var(--accent)}
+.card h3{font-size:21px;font-weight:900;margin:6px 0 8px;line-height:1.4}
+.card p{margin:0;font-size:15px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.empty{padding:40px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px}
+/* 經歷 */
+.exp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:56px}
+.exp h3{font-size:30px;margin-bottom:12px}
+.exp ul{list-style:none;margin:0;padding:0}
+.exp li{padding:12px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(0,12em) minmax(0,1fr);gap:12px}
+.exp li:last-child{border-bottom:1px solid var(--line)}
+.exp li b{font-weight:700}
+.exp li span{color:var(--muted)}
+/* 作品頁 */
+.dhead{padding:48px 0 28px}
+.back{display:inline-flex;align-items:center;min-height:44px;font-weight:700;text-decoration:none;margin-bottom:10px}
+.dhead h1{font-size:clamp(34px,4.6vw,54px);margin:8px 0 14px}
+.dhead .lead{font-size:19px;color:var(--muted);max-width:40em;margin:0}
+.dcover{border-radius:16px;overflow:hidden}
+.dcover .cover{aspect-ratio:16/8}
+.dbody{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:56px;padding:44px 0 72px}
+.dbody h2{font-size:28px;margin:28px 0 12px}
+.dbody h2:first-child{margin-top:0}
+.dbody p,.dbody li{font-size:17px;line-height:1.85}
+.dbody ul{padding-left:1.2em;margin:0 0 12px}
+.facts{align-self:start;position:sticky;top:96px;background:var(--soft);border-radius:14px;padding:22px}
+.facts dl{margin:0}
+.facts dt{font-size:13px;color:var(--muted)}
+.facts dd{margin:2px 0 14px;font-weight:700}
+.facts .btn{width:100%;justify-content:center;background:var(--accent);color:#fff;margin-top:4px}
+.url{display:block;font-size:13px;color:var(--muted);margin-top:8px;overflow-wrap:anywhere}
+/* 頁尾 */
+footer{background:#23262d;color:#fff}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;padding-top:56px;padding-bottom:56px}
+footer h2{font-size:clamp(28px,3.4vw,42px);margin-bottom:8px}
+footer p{margin:0;color:#cfd1d6}
+/* 進場動畫：只在打開時播一次 */
+@keyframes wipe{from{clip-path:inset(0 0 0 100%)}to{clip-path:inset(0 0 0 0)}}
+@keyframes zoom{from{transform:scale(1.08)}to{transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes sheet{from{opacity:0;transform:translateY(90px)}to{opacity:1;transform:none}}
+.hero .photo{animation:wipe 1.2s cubic-bezier(.7,0,.2,1) both}
+.hero .photo>*{animation:zoom 2.4s cubic-bezier(.2,.7,.2,1) both}
+.r{animation:rise .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--d,0) * 110ms + 250ms)}
+.card.in{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--d,0) * 80ms)}
+/* 寬度：平板 */
+@media (max-width:1080px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nums b{font-size:26px}}
+/* 手機：滿版照片＋往上滑出的名片 */
+@media (max-width:760px){
+  .bar .wrap{min-height:60px}.bar .me{font-size:21px}
+  .bar nav a.hide-m{display:none}.bar nav a{padding:10px 10px;font-size:15px}
+  .hero{display:flex;flex-direction:column;min-height:0}
+  .hero .photo{order:-1;flex:none;height:min(62vh,520px)}
+  .intro{position:relative;margin:-84px 0 0;padding:26px 20px 8px;background:var(--bg);border-radius:22px 22px 0 0;max-width:none;box-shadow:0 -14px 30px -20px rgba(0,0,0,.4)}
+  .intro::before{content:"";display:block;width:44px;height:4px;border-radius:2px;background:var(--line);margin:-10px auto 16px}
+  .intro{animation:sheet 1s cubic-bezier(.2,.8,.2,1) .45s both}
+  .intro h1{font-size:48px}.intro .who{font-size:16px}.intro .lead{font-size:17px;margin:16px 0 22px}
+  .nums{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;border-top:0;padding-top:0;margin-top:26px}
+  .nums div{background:var(--soft);border-radius:12px;padding:12px 14px}.nums b{font-size:24px}
+  .orgs ul{font-size:15px;gap:6px 18px}
+  .do{grid-template-columns:minmax(0,1fr);gap:0}
+  .do>div{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+  .do>div:last-child{border-bottom:1px solid var(--line)}
+  .do .photo{aspect-ratio:1;border-radius:10px;grid-row:span 2}.do .ph{font-size:12px;padding:6px}.do .ph svg{width:24px;height:24px;margin-bottom:4px}
+  .do h3{font-size:19px;margin:0}.do p{font-size:14px}
+  .pills{flex-wrap:nowrap;overflow-x:auto;margin:0 -20px 22px;padding:0 20px 4px;scrollbar-width:none}
+  .pills button{flex:none;padding:0 16px;font-size:15px}
+  .grid{grid-template-columns:minmax(0,1fr);gap:0}
+  .grid .card{flex-direction:row;border:0;border-radius:0;border-top:1px solid var(--line);padding:16px 0;gap:14px;align-items:center}
+  .grid .card:hover{transform:none;box-shadow:none}
+  .grid .card .cover{flex:none;width:112px;aspect-ratio:1;border-radius:12px}
+  .grid .card{background:transparent}
+  .grid .card .gen{padding:0;display:flex;flex-direction:row;align-items:center;justify-content:center}.grid .card .gen strong,.grid .card .gen small{display:none}.grid .card .gen i{position:static;font-size:50px;opacity:.55}
+  .grid .card .meta{padding:0}.grid .card h3{font-size:17px;margin:2px 0 4px}.grid .card p{font-size:14px;-webkit-line-clamp:2}
+  .grid .card:first-child{flex-direction:column;align-items:stretch;border:1px solid var(--line);border-radius:16px;padding:0;margin-bottom:8px;overflow:hidden}
+  .grid .card:first-child .cover{width:100%;aspect-ratio:16/10;border-radius:0}
+  .grid .card:first-child{background:var(--bg)}
+  .grid .card:first-child .gen{padding:20px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between}.grid .card:first-child .gen strong,.grid .card:first-child .gen small{display:block}
+  .grid .card:first-child .gen i{position:absolute;font-size:150px;opacity:.12}
+  .grid .card:first-child .meta{padding:16px 18px 20px}.grid .card:first-child h3{font-size:20px}
+  .exp{grid-template-columns:minmax(0,1fr);gap:36px}.exp h3{font-size:26px}
+  .exp li{grid-template-columns:minmax(0,1fr);gap:0}
+  .dbody{grid-template-columns:minmax(0,1fr);gap:28px}.facts{position:static}
+  .dcover{margin:0 -20px;border-radius:0}.dcover .cover{aspect-ratio:4/3}
+}
+@media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<!-- 作品資料：新增作品只要在這裡加一筆（新的放最上面）。cover 留空會自動排文字封面；有照片時填 images/檔名.jpg -->
+<script type="application/json" id="works-data">
+[
+ {"id":"chem-site","title":"互動化學教學網站","cat":"教學網站","date":"2026 年 10 月起","cover":"",
+  "summary":"為苑裡高中的學測化學課製作：前測診斷、逐步展開的互動詳解，整合第二到四章 102 題歷屆試題。",
+  "role":"授課、網站規劃、教材與互動詳解製作","for":"苑裡高中學測化學課的學生",
+  "body":[["h","做了哪些東西"],["ul",["班級教學網站：用 Google Sites 集中放講義與互動教材。","40 分鐘學測化學前測：20 題，選擇題用 Google 表單、短答拍照繳交，先看清楚每個學生的起點。","第一章互動詳解：原子結構與週期表、離子晶體與化學鍵，13 題、76 個步驟。","第二到四章整合入口：13 個單元、102 題歷屆學測試題，可切換章節與單元，也能離線打開。"]],["h","怎麼設計"],["p","詳解一次只出現一步，學生自己按「下一步」，卡住的地方會很清楚。學生對實驗比較陌生，所以備課時固定把實驗目的、裝置、觀察到的現象和化學解釋串起來，再連回題目判讀。"],["p","教材整理用了 AI 協作：先把課本與講義轉成文字、整理成講義，再做成互動詳解。"]],
+  "link":{"text":"打開化學教學網站","url":"https://sites.google.com/mssh.tw/youngyoungteacherchemistry/%E9%A6%96%E9%A0%81"}},
+ {"id":"trainer-course","title":"才藝師資培訓課程","cat":"師資培訓","date":"","cover":"",
+  "summary":"設計 21 堂線上課程，帶大學生從零開始成為才藝講師；超過 200 位學員參與，100 位以上成為正式才藝老師。",
+  "role":"課程設計、錄製、批改與驗收","for":"想成為才藝講師的大學生",
+  "body":[["p","這套培訓系統不只錄課程，也花大量時間批改作業、實體驗收，並針對學員的教學表現給回饋。培訓出的老師進入教學現場，累計創造超過一萬小時的教學時數。"],["p","這段經驗讓我從「自己把課教好」，開始思考「怎麼幫助另一個人成為老師」：教師專業來自一次又一次的練習、觀察、回饋與修正。"]],"link":null},
+ {"id":"kings-lessons","title":"國王才藝教案","cat":"教案設計","date":"","cover":"",
+  "summary":"擔任教案編寫，開發昆蟲、卡林巴琴、骨牌與動力積木課程。",
+  "role":"教案編寫","for":"才藝課老師與學生",
+  "body":[["p","寫教案時，我會從完整的角度想一堂課：學生已經知道什麼、活動會不會太難、什麼時候需要示範、問題要怎麼問，以及怎麼讓課程不只是好玩，也真的有學習價值。"]],"link":null},
+ {"id":"gongwan","title":"貢丸喜劇社","cat":"喜劇","date":"","cover":"",
+  "summary":"在陽明交大創立的單口喜劇社團，擔任創社社長；站立風城喜劇爭霸賽新人賽冠軍。",
+  "role":"創社社長、演出","for":"陽明交大學生與喜劇觀眾",
+  "body":[["p","累積超過百場喜劇演出，常在新竹各地的開放麥克風登台。表演教會我看臺下的反應、調整節奏，這些本事後來也帶進了教室。"]],"link":null},
+ {"id":"magic","title":"魔術表演","cat":"表演","date":"","cover":"",
+  "summary":"領有新竹市街頭藝人執照，上過綜藝大熱門，兩度與陳俊太教授登上陽明交大藝術季大舞臺。",
+  "role":"魔術師","for":"大小朋友",
+  "body":[["ul",["新竹市街頭藝人執照","電視演出：綜藝大熱門","陽明交大藝術季大舞臺（與陳俊太教授）","與新竹市政府合作，在護城河、火車站前等地演出","公益演出：新竹仁愛兒童之家；心路基金會表演與魔術教學","教育學程聖誕晚會連續兩年受邀演出"]]],"link":null},
+ {"id":"schweitzer","title":"史懷哲計畫：寶山國中魔術課","cat":"教學現場","date":"","cover":"",
+  "summary":"參與史懷哲 14.0 計畫，把魔術課程帶進寶山國中。",
+  "role":"魔術課程教師","for":"寶山國中學生",
+  "body":[["p","偏鄉的孩子比較少有機會接觸才藝課程。我把擅長的魔術帶進教室，讓學生在一次次練習裡，發現自己也做得到，也更有勇氣站上臺。"]],"link":null}
+]
+</script>
+
+<header class="bar"><div class="wrap">
+  <a class="me hand" href="#home">羊羊老師</a>
+  <nav aria-label="主選單">
+    <a href="#works">作品</a><a class="hide-m" href="#do">我在做的事</a><a class="hide-m" href="#exp">經歷</a><a class="cta" href="#contact">聯絡我</a>
+  </nav>
+</div></header>
+
+<main id="v-home">
+  <section class="hero" aria-label="自我介紹">
+    <div class="intro">
+      <h1 class="hand r" style="--d:0">羊羊老師</h1>
+      <p class="who r" style="--d:1">楊勝銘｜英文與才藝老師、魔術師、喜劇演員</p>
+      <p class="lead r" style="--d:2">把舞台上抓住注意力的本事，帶進教室。從幼兒園教到高中，也培訓大學生成為才藝老師。</p>
+      <div class="btns r" style="--d:3"><a class="btn solid" href="#works">看作品</a><a class="btn line" href="#contact">邀請授課或演出</a></div>
+      <div class="nums r" style="--d:4">
+        <div><b>600+</b><span>小時教學</span></div>
+        <div><b>1 萬+</b><span>人次學生</span></div>
+        <div><b>100+</b><span>培訓的才藝老師</span></div>
+        <div><b>100+</b><span>場喜劇演出</span></div>
+      </div>
+    </div>
+    <figure class="photo" data-img="" data-label="形象大照片（建議橫式或方形、2000 px 以上）"></figure>
+  </section>
+
+  <section class="orgs" aria-label="合作與服務過的單位"><div class="wrap">
+    <span class="lab">合作與服務過的單位</span>
+    <ul><li>陽明交通大學</li><li>國王才藝</li><li>苑裡高中</li><li>史懷哲計畫</li><li>東莞臺商子弟學校</li><li>虎林國小</li><li>新竹市政府</li><li>心路基金會</li></ul>
+  </div></section>
+
+  <section class="sec" id="do" aria-labelledby="do-t"><div class="wrap">
+    <h2 id="do-t" class="hand">我在做的事</h2>
+    <div class="do">
+      <div><figure class="photo" data-img="" data-label="教學照片"></figure><h3>教學</h3><p>英文課輔、學測化學，以及魔術、3D 筆、競速疊杯、魔方等才藝課。</p></div>
+      <div><figure class="photo" data-img="" data-label="培訓照片"></figure><h3>課程與師資培訓</h3><p>編寫才藝教案，設計 21 堂線上師資培訓課程，帶大學生成為才藝講師。</p></div>
+      <div><figure class="photo" data-img="" data-label="表演照片"></figure><h3>表演</h3><p>新竹市街頭藝人、綜藝大熱門、站立風城喜劇爭霸賽新人賽冠軍。</p></div>
+    </div>
+  </div></section>
+
+  <section class="sec" style="background:var(--soft)" aria-labelledby="latest-t"><div class="wrap">
+    <div class="head"><h2 id="latest-t" class="hand">最新作品</h2><a class="more" href="#works">看全部作品</a></div>
+    <div class="pills" id="pills-home" role="group" aria-label="作品分類"></div>
+    <div class="grid" id="grid-home"></div>
+  </div></section>
+
+  <section class="sec" id="exp" aria-labelledby="exp-t"><div class="wrap">
+    <h2 id="exp-t" class="hand" style="position:absolute;left:-9999px">經歷</h2>
+    <div class="exp">
+      <div><h3 class="hand">教學與培訓經歷</h3><ul>
+        <li><b>史懷哲 14.0 計畫</b><span>把魔術課程帶進寶山國中</span></li>
+        <li><b>東莞臺商子弟學校</b><span>十四天海外見習，國中英文、國小與幼兒園魔術</span></li>
+        <li><b>虎林國小</b><span>英文課輔老師</span></li>
+        <li><b>聯電聖心</b><span>個案輔導，英文與才藝教學</span></li>
+        <li><b>社團指導老師</b><span>義民高中、林口國中、萬芳國小等</span></li>
+        <li><b>國王才藝</b><span>教案編寫、才藝師資培訓</span></li>
+      </ul></div>
+      <div><h3 class="hand">證照、獲獎與學歷</h3><ul>
+        <li><b>新竹市街頭藝人執照</b><span>魔術表演</span></li>
+        <li><b>站立風城喜劇爭霸賽</b><span>新人賽冠軍</span></li>
+        <li><b>國立陽明交通大學</b><span>材料科學與工程學系</span></li>
+        <li><b>陽明交大師資培育課程</b><span>一般師資生</span></li>
+      </ul></div>
+    </div>
+  </div></section>
+</main>
+
+<main id="v-works" hidden><div class="wrap sec">
+  <div class="head"><h1 class="hand" style="font-size:clamp(34px,4.6vw,52px)">全部作品</h1><span style="color:var(--muted)" id="count"></span></div>
+  <div class="pills" id="pills-all" role="group" aria-label="作品分類"></div>
+  <div class="grid" id="grid-all"></div>
+</div></main>
+
+<main id="v-work" hidden></main>
+
+<footer id="contact"><div class="wrap">
+  <div><h2 class="hand">邀請羊羊老師授課或演出</h2><p>聯絡方式準備中</p></div>
+  <p style="font-size:14px">© 2026 楊勝銘</p>
+</div></footer>
+
+<script>
+{
+  const works = JSON.parse(document.getElementById('works-data').textContent);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const CAT = {'教學網站':['#1f3a5f','網'],'師資培訓':['#2f5d50','培'],'教案設計':['#8a5a12','案'],'喜劇':['#2b2d33','笑'],'表演':['#a3142a','演'],'教學現場':['#3f5675','教']};
+  const camera = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg>';
+
+  function cover(w){
+    if (w.cover) return `<div class="cover"><img src="${esc(w.cover)}" alt="" loading="lazy"></div>`;
+    const [bg, ch] = CAT[w.cat] || ['#23262d', '作'];
+    return `<div class="cover" style="background:${bg}"><div class="gen"><small>${esc(w.cat)}</small><strong>${esc(w.title)}</strong><i aria-hidden="true">${ch}</i></div></div>`;
+  }
+  function card(w, i){
+    return `<a class="card in" style="--d:${i}" href="#work-${esc(w.id)}">${cover(w)}<div class="meta"><span class="cat">${esc(w.cat)}</span><h3>${esc(w.title)}</h3><p>${esc(w.summary)}</p></div></a>`;
+  }
+  const cats = ['全部作品', ...new Set(works.map(w => w.cat))];
+  function feed(pillsId, gridId, limit){
+    const pills = document.getElementById(pillsId), grid = document.getElementById(gridId);
+    let cur = '全部作品';
+    function draw(){
+      pills.innerHTML = cats.map(c => `<button type="button" aria-pressed="${c===cur}">${esc(c)}</button>`).join('');
+      const list = works.filter(w => cur === '全部作品' || w.cat === cur).slice(0, limit || 999);
+      grid.innerHTML = list.length ? list.map(card).join('') : '<p class="empty">這個分類還沒有作品。</p>';
+      const n = document.getElementById('count'); if (n && !limit) n.textContent = `共 ${list.length} 件`;
+    }
+    pills.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; cur = b.textContent; draw(); });
+    draw();
+  }
+  feed('pills-home', 'grid-home', 6);
+  feed('pills-all', 'grid-all', 0);
+
+  function block([t, v]){
+    if (t === 'h') return `<h2 class="hand">${esc(v)}</h2>`;
+    if (t === 'ul') return `<ul>${v.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+    return `<p>${esc(v)}</p>`;
+  }
+  function detail(w){
+    const others = works.filter(x => x.id !== w.id).slice(0, 3);
+    return `<div class="wrap"><div class="dhead"><a class="back" href="#works">回到全部作品</a><div class="cat">${esc(w.cat)}${w.date ? '｜' + esc(w.date) : ''}</div><h1 class="hand">${esc(w.title)}</h1><p class="lead">${esc(w.summary)}</p></div>
+      <div class="dcover">${cover(w)}</div>
+      <div class="dbody"><article>${(w.body || []).map(block).join('')}</article>
+        <aside class="facts"><dl>${w.role ? `<dt>我負責</dt><dd>${esc(w.role)}</dd>` : ''}${w.for ? `<dt>對象</dt><dd>${esc(w.for)}</dd>` : ''}${w.date ? `<dt>時間</dt><dd>${esc(w.date)}</dd>` : ''}</dl>
+        ${w.link ? `<a class="btn" href="${esc(w.link.url)}">${esc(w.link.text)}</a>` : ''}</aside></div>
+      ${others.length ? `<div class="head"><h2 class="hand" style="font-size:32px">更多作品</h2><a class="more" href="#works">看全部作品</a></div><div class="grid" style="margin-bottom:80px">${others.map(card).join('')}</div>` : ''}</div>`;
+  }
+
+  // 照片：有檔案就顯示，沒有就留一個標示用的位置
+  document.querySelectorAll('figure.photo').forEach(f => {
+    const img = new Image();
+    img.alt = ''; img.decoding = 'async';
+    img.onload = () => { f.innerHTML = ''; f.appendChild(img); };
+    img.onerror = () => { f.innerHTML = `<div class="ph"><div>${camera}${esc(f.dataset.label)}</div></div>`; };
+    f.innerHTML = `<div class="ph"><div>${camera}${esc(f.dataset.label)}</div></div>`;
+    if (f.dataset.img) img.src = f.dataset.img;
+  });
+
+  const views = { home: document.getElementById('v-home'), works: document.getElementById('v-works'), work: document.getElementById('v-work') };
+  function show(v){ for (const k in views) views[k].hidden = k !== v; }
+  function route(){
+    const h = decodeURIComponent(location.hash.slice(1));
+    if (h === 'works') { show('works'); window.scrollTo(0, 0); document.title = '全部作品｜羊羊老師'; return; }
+    if (h.startsWith('work-')) {
+      const w = works.find(x => 'work-' + x.id === h);
+      if (w) { views.work.innerHTML = detail(w); show('work'); window.scrollTo(0, 0); document.title = w.title + '｜羊羊老師'; return; }
+    }
+    show('home'); document.title = '羊羊老師｜楊勝銘';
+    const el = h && h !== 'home' ? document.getElementById(h) : null;
+    if (el) el.scrollIntoView(); else window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', route); route();
+}
+</script>
+</body>
+</html>
