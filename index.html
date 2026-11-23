@@ -86,16 +86,7 @@ nav a[aria-current]::after{content:"";height:2px;background:currentColor;positio
 .feature-side h3{font-size:clamp(20px,1.7vw,25px)}
 .feature-side p{font-size:15px}
 .stage-thumb{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;object-position:55% 50%;border-radius:2px}
-.props{position:relative;isolation:isolate;overflow:hidden;display:grid;place-items:center;aspect-ratio:2.7/1;background:#e8e1d2;color:#41392e;border-radius:2px;
-  background-image:repeating-linear-gradient(0deg,transparent,transparent 23px,#635b4810 24px),repeating-linear-gradient(90deg,transparent,transparent 23px,#635b4810 24px)}
-.props-scene{position:relative;width:70%;height:100%}
-.envelope{position:absolute;left:10%;width:52%;height:59%;top:25%;transform:rotate(-8deg);background:#faf4e8;border:1px solid #b4a996;box-shadow:2px 5px 0 #65563e1f;overflow:hidden}
-.envelope::before{content:"";position:absolute;width:76%;aspect-ratio:1;left:12%;bottom:48%;background:#f5eddf;border:1px solid #b4a996;transform:rotate(45deg) skew(-9deg,-9deg)}
-.ball{position:absolute;width:9%;aspect-ratio:1;border-radius:50%;box-shadow:inset -5px -5px 0 #0002,2px 4px 0 #65563e27}
-.ball.red{left:59%;top:43%;background:#a33b40}.ball.blue{left:72%;top:31%;background:#486b81}.ball.yellow{left:71%;top:62%;background:#cf9d3d}
-.chem-art{display:grid;place-content:center;background:#263838;color:#f9f6e8;aspect-ratio:4/3;border-radius:2px}
-.element{display:grid;grid-template-columns:1fr;border:1px solid #ecebd594;padding:4px 11px 5px;font-family:Georgia,serif;text-align:center;line-height:1}
-.element small{font:11px/1.2 var(--sans);text-align:start}.element b{font-size:clamp(32px,3.2vw,44px);font-weight:400}
+.handout-thumb{object-fit:contain;background:var(--tint)}
 .about-layout{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:clamp(30px,7vw,92px)}
 .about-text p+p{margin-top:1em}.about-text p{font-size:17px;line-height:1.9}
 .about-text a{text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:.22em}
@@ -118,12 +109,33 @@ nav a[aria-current]::after{content:"";height:2px;background:currentColor;positio
 .detail-head{border-bottom:1px solid var(--line);padding-block:26px 34px}
 .back{margin-bottom:20px;font-size:15px}
 .detail-title{margin:8px 0 12px;font-size:clamp(34px,4.2vw,57px)}
+.detail-title .work-name{display:inline-block;max-width:100%}
 .detail-summary{max-width:39em;font-size:clamp(17px,1.6vw,21px);line-height:1.8;color:var(--muted)}
 .detail-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,270px);align-items:start;gap:clamp(28px,6vw,72px);padding-block:38px 60px}
 article{min-width:0}article h2{font:700 27px/1.5 var(--serif);margin:26px 0 8px}
 article h2:first-child{margin-top:0}article p,article li{font-size:17px;line-height:1.9}
 article p+p{margin-top:1em}article ul{padding-inline-start:1.4em;margin:0}article li+li{margin-top:.38em}
 .detail-photo{margin-bottom:24px}.detail-photo img{width:100%;height:auto;border-radius:2px}
+.field-grid,.work-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(22px,3.5vw,48px) clamp(16px,2.8vw,34px)}
+.work-grid{margin-top:24px}.field-grid{padding-bottom:14px}
+.work-tile{display:flex;flex-direction:column;align-items:flex-start;min-width:0;border-top:1px solid var(--line);padding-top:12px}
+.work-tile .tile-image{overflow:hidden;aspect-ratio:16/10;width:100%;background:var(--tint);margin-bottom:13px}
+.tile-image img{width:100%;height:100%;object-fit:cover}
+.work-tile h2,.work-tile h3{font:700 clamp(21px,2vw,28px)/1.48 var(--serif);margin:.18em 0 .35em}
+.work-tile:hover h2,.work-tile:hover h3,.work-tile:focus-visible h2,.work-tile:focus-visible h3{color:var(--accent)}
+.work-tile p{font-size:15px;color:var(--muted);line-height:1.8}
+.work-tile .category{font-size:13px}.tile-date{color:var(--muted);font-weight:500;letter-spacing:0}
+.film-still,.video-frame{position:relative;display:block;overflow:hidden;aspect-ratio:16/9;color:white;background:#191818;border-radius:2px}
+.film-still img,.video-frame img,.video-frame iframe{width:100%;height:100%;object-fit:cover;border:0}
+.film-still span,.play-film span{position:absolute;bottom:14px;left:14px;border-radius:3px;background:#191818e8;color:white;padding:5px 12px;font-size:14px;font-weight:700}
+.play-film{display:block;width:100%;height:100%;padding:0;cursor:pointer;background:none;border:0}
+.play-film:focus-visible{outline-offset:-4px}.film-block{margin:0 0 24px}
+.film-block figcaption{margin:.5em 0 .3em;color:var(--muted);font-size:14px}
+.film-block a,.body-link{color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:.2em}
+article .detail-photo:not(:first-child),article .film-block:not(:first-child){margin-top:20px}
+.facts a.button{font-size:15px}.source-links{display:grid;gap:8px;margin-top:18px}.source-links a{margin:0;text-decoration:underline;text-underline-offset:.2em}
+@media(max-width:900px){.work-grid,.field-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.work-grid,.field-grid{grid-template-columns:minmax(0,1fr)}.work-tile .tile-image{aspect-ratio:1.9}.field-grid{gap:25px}.film-still span,.play-film span{bottom:8px;left:8px}.play-film span{font-size:13px}}
 .facts{padding:20px 22px;background:var(--tint);border-top:2px solid var(--accent)}
 .facts dt{font-size:13px;color:var(--muted);font-weight:700}.facts dd+dt{margin-top:12px}.facts a{margin-top:16px}
 .related{padding-bottom:56px}
@@ -155,7 +167,7 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
   .heading{gap:8px 16px;margin-bottom:16px}
   .feature-layout,.about-layout,.experience,.detail-body{grid-template-columns:minmax(0,1fr)}
   .feature-layout{gap:24px}.feature-side{grid-template-columns:minmax(0,1fr) minmax(86px,30%);padding-block:18px}
-  .props{aspect-ratio:2.2/1}.feature h3{margin:4px 0}
+  .feature h3{margin:4px 0}
   .about-layout{gap:14px}.experience{gap:28px}
   .entry{grid-template-columns:minmax(0,1fr) auto;gap:3px 12px;padding:18px 0}
   .entry .category,.entry h2,.entry h3,.entry p{grid-column:1}.entry-arrow{grid-column:2;grid-row:2}
@@ -175,13 +187,25 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
 <!-- 作品資料沿用原有欄位與識別碼。新增作品時，請將新紀錄放在陣列開頭。 -->
 <script type="application/json" id="works-data">
 [
-  {"id":"grammar-magic","title":"文法 × 魔術：祈使句","cat":"教案設計","date":"2026 年 3 月","cover":"","summary":"我把預測信封、袋子和三色球帶進國一英文課。學生先照英文指令選球，等預言揭曉，再回頭看自己剛剛聽懂了哪一句。","role":"英文教案設計、魔術示範與教學展演","for":"國一英文課","body":[["h","先請一位同學選球"],["p","我拿出預測信封、袋子和三色球，請一位同學上前。聽到「Please choose one.」的時候，他得先從袋子裡選一顆球。等信封裡的預言揭曉，全班已經知道這句英文會請人做什麼。"],["h","把剛才的話寫回黑板"],["p","我把剛才用過的指令寫到黑板上，請大家找找動詞原形，看看肯定和否定怎麼說，再比較一般動詞、Be 和 Let’s 開頭的指令。這時候，學生有自己剛剛做過的動作可以對照。"],["h","換學生給指令"],["p","最後換學生自己造句。這份 40 分鐘教案有兩個練習目標，學生要能辨認至少四句祈使句，並用口說或書寫給出至少兩句指令。"],["h","教案展演"],["p","這份教案在 2026 年 3 月 28 日的清交教育學程小梅竹教案展演獲得第三名。"]],"link":null},
-  {"id":"chem-site","title":"互動化學教學網站","cat":"教學網站","date":"2026 年 10 月起","cover":"","summary":"在苑裡高中的學測化學課，我先用前測看學生卡在哪裡，再把解題過程拆開，讓學生自己按下一步。","role":"授課、網站規劃、教材與互動詳解製作","for":"苑裡高中學測化學課的學生","body":[["h","這堂課用的教材"],["ul",["班級教學網站：用 Google Sites 集中放講義與互動教材。","40 分鐘學測化學前測：20 題，選擇題用 Google 表單、短答拍照繳交，先看清楚每個學生的起點。","第一章互動詳解：原子結構與週期表、離子晶體與化學鍵，13 題、76 個步驟。","第二到四章整合入口：13 個單元、102 題歷屆學測試題，可切換章節與單元，也能離線打開。"]],["h","怎麼設計"],["p","詳解一次只出現一步，學生自己按「下一步」，卡住的地方會很清楚。學生對實驗比較陌生，所以備課時固定把實驗目的、裝置、觀察到的現象和化學解釋串起來，再連回題目判讀。"],["p","教材整理用了 AI 協作：先把課本與講義轉成文字、整理成講義，再做成互動詳解。"]],"link":{"text":"打開化學教學網站","url":"https://sites.google.com/mssh.tw/youngyoungteacherchemistry/%E9%A6%96%E9%A0%81"}},
-  {"id":"trainer-course","title":"才藝師資培訓課程","cat":"師資培訓","date":"","cover":"","summary":"我把才藝講師的培訓做成 21 支教學影片，搭配示範、作業批改和實體驗收，帶大學生練習怎麼教一堂課。","role":"課程設計、錄製、批改與驗收","for":"想成為才藝講師的大學生","body":[["h","從看示範，到自己教"],["p","我參與設計、錄製伯樂才藝師資培訓課程。21 支教學影片之外，還有 5 支示範影片。學員交回作業，我再逐一批改，到了實體驗收，才看得見他站在學生面前會怎麼教。"],["p","自己上課時，我得決定什麼時候示範。培訓另一位老師時，我還得把這個決定說清楚，讓他也有辦法觀察學生、調整教法。"]],"link":null},
-  {"id":"kings-lessons","title":"國王才藝教案","cat":"教案設計","date":"","cover":"","summary":"擔任教案編寫，開發昆蟲、卡林巴琴、骨牌與動力積木課程。","role":"教案編寫","for":"才藝課老師與學生","body":[["p","寫教案時，我會從完整的角度想一堂課：學生已經知道什麼、活動會不會太難、什麼時候需要示範、問題要怎麼問，以及怎麼讓課程不只是好玩，也真的有學習價值。"]],"link":null},
-  {"id":"gongwan","title":"貢丸喜劇社","cat":"喜劇","date":"","cover":"","summary":"在陽明交大創立的單口喜劇社團，擔任創社社長；站立風城喜劇爭霸賽新人賽冠軍。","role":"創社社長、演出","for":"陽明交大學生與喜劇觀眾","body":[["p","我在陽明交大創立貢丸喜劇社，也常在新竹各地的開放麥克風演出。一個笑點講完，得先看看臺下的反應，再決定下一句什麼時候接。這個習慣後來也跟著我進了教室。"]],"link":null},
-  {"id":"magic","title":"魔術表演","cat":"表演","date":"","cover":"images/magic-stage.webp","summary":"從新竹護城河、火車站前，到陽明交大藝術季的大舞臺，我帶著魔術道具，在不同的場地跟觀眾見面。","role":"魔術師","for":"大小朋友","body":[["h","街頭與舞臺"],["p","我領有新竹市街頭藝人執照，也曾與新竹市政府合作，在護城河、火車站前等地演出。2025 年 5 月，我在「藝影之都」演出戶外魔術喜劇。"],["h","其他演出與教學"],["ul",["電視節目《綜藝大熱門》演出。","兩度與陳俊太教授登上陽明交大藝術季大舞臺。","在新竹仁愛兒童之家公益演出，也曾到心路基金會表演、教魔術。","連續兩年受邀於教育學程聖誕晚會演出。"]]],"link":null},
-  {"id":"schweitzer","title":"史懷哲計畫：寶山國中魔術課","cat":"教學現場","date":"","cover":"","summary":"參與史懷哲 14.0 計畫，把魔術課程帶進寶山國中。","role":"魔術課程教師","for":"寶山國中學生","body":[["p","我參與史懷哲 14.0 計畫，在寶山國中帶魔術課。學生有時間自己練道具，也能試著把練好的魔術演給別人看。"]],"link":null}
+  {"id":"hot-door","title":"《綜藝大熱門》魔術聯演","cat":"表演","date":"2024 年 1 月","cover":"","summary":"我和清交魔術社一起上《綜藝大熱門》，跟小鐘同臺變魔術。這段十三分鐘的節目精華，連主持人在旁邊等得忍不住插話的反應也收進去了。","role":"清交魔術社聯合表演成員","for":"《綜藝大熱門》觀眾","body":[["h","從校園晚會到攝影棚"],["p","我曾擔任赤狐魔術社第十九屆社長，也在清交慈善魔術晚會參與演出和舞監工作。這次我和清交魔術社的夥伴走進《綜藝大熱門》的攝影棚，和小鐘一起演出。上方是節目剪出的精華，完整集數也保留了這段聯演。"]],"link":{"text":"看完整節目 15:05","url":"https://www.youtube.com/watch?v=BpyDxOl968U&t=905s"},"video":{"id":"JPm9x3YrBvk","title":"《綜藝大熱門》小鐘與清交魔術社聯合表演","caption":"《綜藝大熱門》官方精華，小鐘與清交魔術社聯合表演。2024 年 1 月 12 日發布，全長 13 分 19 秒。"},"related":["magic","stage-hosting","schweitzer"]},
+  {"id":"tone-contours","title":"同一場訪談裡的華語四聲","cat":"研究與設計","date":"2026 年 11 月","role":"研究選題、挑選語料，與 Codex 協作對齊、量測、繪圖與分析","for":"社會語音學課程研究","summary":"兩個人都念二聲，平均音高接近，聲音轉折的位置會一樣嗎？我從同一場訪談各選二十個字，沿著每個字的韻母畫出音高曲線。","body":[["h","把一個字展開成九個點"],["p","兩位說話者各取四種聲調，每一調各五個字。在韻母時長的 10% 到 90% 各量九次基頻，四十個字合計 360 個取樣點，再換算成相對於個人平均音高的半音。"],["h","平均高度接近，轉折仍有早晚"],["p","這一小組二聲裡，兩人的平均高度只差約 0.09 個半音，最低點卻分別落在韻母的 80% 與 50%。把每個字的線也留在圖上，就看得出平均線背後還有多少差異。這個觀察只適用於兩人在這段訪談的樣本。"]],"link":null,"related":["hsinchu-comedy-interview","grammar-magic"],"cover":"images/tone-contours.webp","coverInfo":{"width":1183,"height":900,"alt":"四格折線圖依序呈現兩位說話者的一、二、三、四聲音高曲線。","caption":"同一場訪談的華語四聲。粗線是每位說話者五個字的平均，淡線則保留每個字自己的走勢。"}},
+  {"id":"word-review","title":"同分之後，單字怎麼複習？","cat":"教學網站","date":"2026 年 11 月","role":"試教流程、錯題分類與原型設計，AI 協作製作","for":"高中英文單字試教","summary":"聽不出一個字，和聽得出來卻拼錯，需要的下一題不一樣。我做了一個離線試教工具，把這個差別帶進隔天的複習。","body":[["h","看兩個同分的學生"],["p","用第六課單字做示範時，我讓兩位虛構學生在兩題裡各答對一題。光看總分，他們同得一分；打開作答記錄，就能分辨哪一題卡在聽音、哪一題卡在拼字。"],["h","讓錯題決定下一輪"],["p","老師可以在同一台裝置上示範作答與查看複習內容。這一版重點是試走分類和排題的流程，畫面使用示範資料。"]],"link":null,"related":["chem-site","market-english"],"cover":"images/demo-vocab.webp","coverInfo":{"width":1160,"height":735,"alt":"兩位示範學生的分數相同，系統排出不同的下次練習。","caption":"原型裡的兩位虛構學生同得一分。下次一人先練 firmly 的聽音，另一人先練 symbolize 的拼字。"}},
+  {"id":"comedy-class","title":"貢丸喜劇社的單口喜劇教室","cat":"教學網站","date":"2026 年","cover":"images/demo-comedy.webp","summary":"我把喜劇社課整理成上課能操作的網站。到了第三堂，社員用同一個前提試不同的語氣、停頓和舞臺人設。","role":"社課內容整理、練習設計與網站製作（AI 協作）","for":"練習單口喜劇的社員","body":[["h","同一句話，用誰的口氣講？"],["p","講自己的故事時，紙上的字只決定了一半。上了臺，要把哪個字放慢、哪裡等一拍、講話的人怎麼看待這件事，都會改變觀眾聽到的意思。第三堂「舞台人設與表演拍」把這些選擇做成限時練習。"],["h","讓教室跟著練習走"],["p","授課時可以直接切到當堂的練習，讓大家跟著計時器試講，再回來討論同一段話換個演法會怎樣。"]],"link":null,"related":["gongwan","hsinchu-comedy-interview"],"coverInfo":{"width":1160,"height":735,"alt":"社課投影畫面列出五分鐘的舞臺觀察練習。","caption":"第三堂社課的第一輪：台上的人先不開口，台下寫下一個印象，說出自己觀察到的線索。"}},
+  {"id":"market-english","title":"用英語逛泰國市集","cat":"教案設計","date":"2026 年 11 月","cover":"images/demo-market.webp","summary":"同一組的客人、店員和記帳員拿到不同資訊。想知道預算夠不夠，得先用英文把價格問出來。","role":"國中英文試教設計、角色卡與學生學習單","for":"七年級英語","body":[["h","為什麼把價格只印在店員卡上？"],["p","我把自己在泰國市場用英語議價的經驗帶進教案。先讀咖啡店的點餐對話，再發下市集角色卡。客人看得到要買什麼，價錢在店員手上，記帳員則要等兩人談完才能核對預算。"],["h","每個人都要開口，也要自己算一次"],["p","需要協助的組別能看句型提示，熟悉對話的組別可以自己問價、回應和加總。最後收回個人的出口題，才能看出哪些學生已經會自己完成交易。"]],"link":null,"related":["grammar-magic","media-literacy-magic"],"coverInfo":{"width":980,"height":449,"alt":"英語議價活動的小組桌墊，記有預算、成交目標及組員角色。","caption":"學生版市集桌墊。兩位顧客合計有 100 泰銖，試著用英語談到 90 泰銖成交。"}},
+  {"id":"media-literacy-magic","title":"真假資訊的魔術課","cat":"教案設計","date":"","cover":"images/demo-factcheck.webp","summary":"三張牌足以讓人看錯一次。我把這個經驗寫成兩節高一英文課，讓學生從「我剛才看見什麼」走到「我用什麼證據說服你」。","role":"英文與媒體識讀教案設計","for":"高一英文，兩節共 100 分鐘","body":[["h","留住第一次判斷"],["p","第一個活動用三張牌的魔術引出觀察與推論。先記下自己相信什麼，再問：是哪個動作或哪句話讓我這樣想？"],["h","把 AI 說法拿去查證"],["p","學習單把 AI 的說法、使用過的提示詞和找到的查證依據分開記錄。最後學生用 OREO 結構，以一分鐘英語短講說出觀點、理由與例子。作品收錄的是完成的教案設計，實際授課成效仍待課堂驗證。"]],"link":null,"related":["grammar-magic","market-english"],"coverInfo":{"width":935,"height":579,"alt":"媒體識讀教案學習單中的一分鐘英文短講任務。","caption":"學習單節錄。學生要說明查核判斷、理由和依據，最後把它整理成一分鐘的英文短講。"}},
+  {"id":"hsinchu-comedy-interview","title":"讓喜劇之風吹進新竹！","cat":"採訪與創作","date":"2024 年 6 月","cover":"","summary":"籌備校園喜劇社時，我去訪問站立風城團長彭兆駒，想知道一個地方劇團怎麼找到場地、夥伴和觀眾。訪談最後成了七頁圖文報導。","role":"選題、採訪、撰稿與展出","for":"地方喜劇工作者與跨域成果展觀眾","body":[["h","創社以前，先去問一個做過的人"],["p","自己站過開放麥，和能讓一個場地持續有演出，是兩件不同的事。我帶著籌辦社團會遇到的問題找駒哥，從站立風城的創立緣起談起。"],["h","從一場訪談到七頁報導"],["p","我把口述內容整理成《讓喜劇之風吹進新竹！站立風城的創立緣起與故事》，在 2024 年 6 月的跨域成果展展出。隔年換我坐到受訪者的位置，在電台談貢丸喜劇社怎麼開始。"]],"link":{"text":"聽電台訪問貢丸喜劇社","url":"https://www.uni967.com/programs/180/episodes/22453"},"video":{"id":"qf7uZhDuWPw","title":"勝銘訪問站立風城團長駒哥","caption":"我在自己的頻道留下這場與駒哥的完整對談，全長 51 分 56 秒。"},"related":["gongwan","comedy-class"]},
+  {"id":"dongguan-teaching","title":"東莞十四天：從國三英文到幼兒魔術","cat":"教學現場","date":"2024 年 8 月","cover":"","summary":"同一趟教育見習，我為國三學生準備會考複習和進階補充，也戴上高帽，到小學生和幼兒面前上魔術課。","role":"英文試教、魔術教學、團隊微紀錄片攝影與入鏡","for":"東莞臺商子弟學校","body":[["h","國三 901 班"],["p","準備英文試教時，我得同時想著要複習會考的同學，以及想再往前學的同學。帶完課再回頭整理，板書寫在哪裡、什麼時候換投影、補充材料放在哪一段，都會影響學生跟上課程的方式。"],["h","把同一雙手帶到不同的教室"],["p","面對小學和幼兒園的孩子，我換用道具、示範和肢體互動帶課。師培特刊第 93 期留下了英文試教和「羊羊魔術秀」兩種很不一樣的教室。我也參與團隊微紀錄片的攝影，並是片中主要角色之一。"]],"link":{"text":"讀第 93 期見習特刊","url":"https://drive.google.com/file/d/1EetZoTcF_-XHbgY3aR_xorVXVsn1UPxh/view"},"related":["schweitzer","grammar-magic"]},
+  {"id":"career-skills","title":"帶得走的本事","cat":"教案設計","date":"2026 年","cover":"","summary":"如果拿掉「社長」或「老師」這個職稱，我還能怎麼讓人知道自己會什麼？這是一堂從學生自己的經驗出發的生涯規劃課。","role":"教案、帶領稿、兩頁學習單與評量示例設計","for":"師培生，單節 50 分鐘","body":[["h","先把職稱改寫成一件做過的事"],["p","學習單先請學生選一個熟悉的身分，把它改寫成具體事蹟：當時遇到什麼事，我做了什麼，別人可以從哪裡看見結果？"],["h","把能力帶去下一個場景"],["p","接著把身分拆成幾項任務，對照哪些環節可以交給 AI 協助，哪些判斷需要由人負責。我用自己把喜劇 callback 帶進試教開場的經驗，說明同一種能力能怎麼換個地方使用。"]],"link":null,"related":["comedy-class","trainer-course"]},
+  {"id":"stage-hosting","title":"從 TEDx 到風城開放麥","cat":"表演","date":"2024–2026 年","cover":"images/dayeh-magic-host.webp","summary":"在 TEDxNYCU 年會，我既是主持人，也上臺變魔術。到了站立風城的兒童節開放麥，工作又變成替一位位演員把舞臺接起來。","role":"活動主持、魔術演出、開放麥串場","for":"校園活動與新竹喜劇觀眾","body":[["h","主持和演出的兩個位置"],["p","2024 年 5 月，我在 TEDxNYCU 年會主持，也安排魔術演出。我的主持經驗還包括陽明交大管弦樂團成果發表和大葉大學第十三屆魔幻之夜。"],["h","站立風城的兒童節之夜"],["p","2025 年 4 月 4 日，我以「羊羊」的名字主持風城開放麥。翻開主辦方的節目單，可以看到我這晚負責的角色。"],["h","開場以前"],["p","2026 年 10 月，我也以演員身分參與聲紋喜劇夜。這張是當晚開場前的舞臺。"],["photo",{"src":"images/shengwen-comedy-stage.webp","width":1051,"height":691,"alt":"開場前的喜劇演出空間，台前擺著麥克風和桌椅。","caption":"2026 年 10 月 11 日，聲紋喜劇夜開場前的場地。我也在這場活動演出。"}]],"link":{"text":"看風城開放麥節目單","url":"https://www.accupass.com/event/2503011006234967537760"},"links":[{"text":"大葉魔幻之夜宣傳片","url":"https://www.youtube.com/watch?v=G6Rt0p00C4o"}],"related":["hot-door","gongwan"],"coverInfo":{"width":1280,"height":853,"alt":"我拿著麥克風和畫板，站在大葉大學魔術成果展的紅幕前。","caption":"2025 年 5 月 17 日，大葉大學第十三屆魔幻之夜的主持現場。"}},
+  {"id":"encore-dolphin","title":"海豚安可計畫發表會","cat":"研究與設計","date":"2024 年","cover":"","summary":"一頭明星海豚即使能繼續上臺，牠還是原來的安可嗎？我們把這個推測設計題目改編成一場虛構科技公司的發表會。","role":"小組推測設計與展演，飾演公司總執行長","for":"《推測設計與說故事》課程觀眾","body":[["h","把研究問題放上舞臺"],["p","小組從期中的「新『屍』代的海豚表演」出發，期末成立故事裡的安可永恆科技公司。組員分別扮演生醫與飼育專家、秘書長，我飾演總執行長，向台下介紹這間公司想提供的未來。"],["h","觀眾坐在發表會裡"],["p","同一個選擇，從想延續演出的公司和照顧動物的人口中說出來，聽起來很不一樣。我們讓不同職位的人把自己的理由說出來，把「牠還是牠嗎」這個問題留給台下。"]],"link":null,"related":["hsinchu-comedy-interview","stage-hosting"]},
+  {"id":"community-magic","title":"把魔術帶進兒童之家","cat":"教學現場","date":"2024 年 6 月","cover":"","summary":"赤狐魔術社和清大魔術社一起規劃這次公益教學。我們把平常在校園裡演的魔術，帶到新竹仁愛兒童之家。","role":"公益魔術活動策劃與教學","for":"新竹仁愛兒童之家","body":[["h","兩個校園魔術社，一次共同備課"],["p","我曾任陽明交大赤狐魔術社第十九屆社長，也參與清交慈善魔術晚會的演出與舞監工作。2024 年 6 月 1 日，兩校魔術社一起把魔術教學帶進兒童之家，活動前也留下了公開的募資紀錄。"]],"link":{"text":"看公益魔術計畫原頁","url":"https://www.lifund.com.tw/event/detail/20240512150632080640993B1072339-Event01"},"related":["schweitzer","magic"]},
+  {"id":"grammar-magic","title":"文法 × 魔術：祈使句","cat":"教案設計","date":"2026 年 3 月","cover":"images/demo-grammar.webp","summary":"我把預測信封、袋子和三色球帶進國一英文課。學生先照英文指令選球，等預言揭曉，再回頭看自己剛剛聽懂了哪一句。","role":"英文教案設計、魔術示範與教學展演","for":"國一英文課","body":[["h","先請一位同學選球"],["p","我拿出預測信封、袋子和三色球，請一位同學上前。聽到「Please choose one.」的時候，他得先從袋子裡選一顆球。等信封裡的預言揭曉，全班已經知道這句英文會請人做什麼。"],["h","把剛才的話寫回黑板"],["p","我把剛才用過的指令寫到黑板上，請大家找找動詞原形，看看肯定和否定怎麼說，再比較一般動詞、Be 和 Let’s 開頭的指令。這時候，學生有自己剛剛做過的動作可以對照。"],["h","換學生給指令"],["p","最後換學生自己造句。這份 40 分鐘教案有兩個練習目標，學生要能辨認至少四句祈使句，並用口說或書寫給出至少兩句指令。"],["h","教案展演"],["p","這份教案在 2026 年 3 月 28 日的清交教育學程小梅竹教案展演獲得第三名。"]],"link":null,"coverInfo":{"width":1250,"height":733,"alt":"簡報並列 Please choose one. 和 Choose one, please.","caption":"教案簡報第 21 頁。把 please 從句首移到句尾，學生可以比較兩種選球指令。"}},
+  {"id":"chem-site","title":"互動化學教學網站","cat":"教學網站","date":"2026 年 10 月起","cover":"images/demo-chemistry.webp","summary":"在苑裡高中的學測化學課，我先用前測看學生卡在哪裡，再把解題過程拆開，讓學生自己按下一步。","role":"授課、網站規劃、教材與互動詳解製作","for":"苑裡高中學測化學課的學生","body":[["h","這堂課用的教材"],["ul",["班級教學網站：用 Google Sites 集中放講義與互動教材。","40 分鐘學測化學前測：20 題，選擇題用 Google 表單、短答拍照繳交，先看清楚每個學生的起點。","第一章互動詳解：原子結構與週期表、離子晶體與化學鍵，13 題、76 個步驟。","第二到四章整合入口：13 個單元、102 題歷屆學測試題，可切換章節與單元，也能離線打開。"]],["h","怎麼設計"],["p","詳解一次只出現一步，學生自己按「下一步」，卡住的地方會很清楚。學生對實驗比較陌生，所以備課時固定把實驗目的、裝置、觀察到的現象和化學解釋串起來，再連回題目判讀。"],["p","教材整理用了 AI 協作：先把課本與講義轉成文字、整理成講義，再做成互動詳解。"]],"link":{"text":"打開化學教學網站","url":"https://sites.google.com/mssh.tw/youngyoungteacherchemistry/%E9%A6%96%E9%A0%81"},"coverInfo":{"width":1092,"height":832,"alt":"互動週期表中選取鈉，旁邊顯示逐步解題的內容。","caption":"「原子結構與週期表」互動詳解。第 3 題的第 2 步要看鈉形成 Na⁺ 時，哪個數值發生改變。"}},
+  {"id":"trainer-course","title":"才藝師資培訓課程","cat":"師資培訓","date":"2025–2026 年","cover":"","summary":"我把才藝講師的培訓做成 21 支教學影片，搭配示範、作業批改和實體驗收，帶大學生練習怎麼教一堂課。","role":"課程設計、錄製、批改與驗收","for":"想成為才藝講師的大學生","body":[["h","從看示範，到自己教"],["p","我參與設計、錄製伯樂才藝師資培訓課程。21 支教學影片之外，還有 5 支示範影片。學員交回作業，我再逐一批改，到了實體驗收，才看得見他站在學生面前會怎麼教。"],["p","自己上課時，我得決定什麼時候示範。培訓另一位老師時，我還得把這個決定說清楚，讓他也有辦法觀察學生、調整教法。"],["h","把鏡頭裡的示範帶回現場"],["p","我和團隊花三個月整理教學經驗，再用一個月拍攝，把課程編成三個單元。錄完課還有實體驗收：2026 年 5 月到 6 月分別在中區、南區與北區進行。我的工作從示範如何帶課，一路到看學員試教、逐一給回饋。"]],"link":{"text":"看伯樂官方課程與示範","url":"https://boleeducation.com.tw/become-a-teacher/"},"related":["career-skills","kings-lessons"]},
+  {"id":"kings-lessons","title":"國王才藝教案","cat":"教案設計","date":"","cover":"images/powered-brick-car.webp","summary":"擔任教案編寫，開發昆蟲、卡林巴琴、骨牌與動力積木課程。","role":"教案編寫","for":"才藝課老師與學生","body":[["h","一堂課怎麼交到另一位老師手上"],["p","寫教案時，我會從完整的角度想一堂課：學生已經知道什麼、活動會不會太難、什麼時候需要示範、問題要怎麼問，以及怎麼讓課程不只是好玩，也真的有學習價值。"],["h","從卡林巴琴到動力積木"],["p","教卡林巴琴要準備琴譜，做骨牌和動力積木則得把動作拆開。除了文字教案，我也參與 TalentFlix 的教案影片與學習單，把老師需要示範的步驟留下來。"],["h","昆蟲課的備課問題"],["p","我把活體照顧、觀察重點和積木組裝整理成備課工具，讓帶課老師能對照當天要講的知識和要做的動作。我提供八堂課的教學需求和現場流程，與 AI 協作製作了教師版頁面。"],["photo",{"src":"images/summer-observation.webp","width":1120,"height":648,"alt":"一隻馬陸沿著手背爬行。","caption":"2026 年暑期自然觀察課，從手背上的馬陸近看牠的身體與步足。"}]],"link":null,"related":["trainer-course","schweitzer"],"coverInfo":{"width":1120,"height":702,"alt":"桌上的藍色積木車露出輪軸和齒輪。","caption":"2026 年 7 月的動力積木課。從側面看這台車，車架、輪軸和齒輪的關係一目了然。"}},
+  {"id":"gongwan","title":"貢丸喜劇社","cat":"喜劇","date":"2024 年創社起","cover":"images/gongwan-showcase.webp","summary":"我在陽明交大創立貢丸喜劇社。一方面自己寫段子、上開放麥，另一方面也帶社員把第一次試講的素材練成能上臺的一段。","role":"創社社長、演出","for":"陽明交大學生與喜劇觀眾","body":[["h","自己上臺，也幫別人上臺"],["p","2024 年，我在站立風城喜劇爭霸賽前哨戰拿到並列冠軍。同年在交大創立貢丸喜劇社，把新竹校外開放麥的經驗帶回校園。"],["h","從社課到七個人的成發"],["p","2026 年的「喜劇貢丸喜聚」安排三堂幹部系列課。到了 5 月 25 日的期末成發，七位社員上臺。從拿著一則生活素材到第一次對觀眾講完，是我帶社團最在意的那一段。"],["h","校慶的單口演出"],["video",{"id":"UjpJVRS6wng","title":"陽明交大四週年校慶單口喜劇","start":2584,"caption":"陽明交大官方四週年校慶實錄，從 43:04 起觀看這段單口演出。"}]],"link":{"text":"聽環宇電台創社專訪","url":"https://www.uni967.com/programs/180/episodes/22453"},"related":["comedy-class","hsinchu-comedy-interview","stage-hosting"],"coverInfo":{"width":1060,"height":896,"alt":"貢丸喜劇社期末發表的開場，台上拿著麥克風，手中有一塊寫字板。","caption":"2026 年 5 月 25 日，貢丸喜劇社第二屆期末發表，擷取自當天的開場錄影。"}},
+  {"id":"magic","title":"魔術表演","cat":"表演","date":"","cover":"images/magic-stage.webp","summary":"從新竹護城河、火車站前，到陽明交大藝術季的大舞臺，我帶著魔術道具，在不同的場地跟觀眾見面。","role":"魔術師","for":"大小朋友","body":[["h","街頭與舞臺"],["p","我領有新竹市街頭藝人執照，也曾與新竹市政府合作，在護城河、火車站前等地演出。2025 年 5 月，我在「藝影之都」演出戶外魔術喜劇。"],["h","其他演出與教學"],["ul",["我和清交魔術社一起參與《綜藝大熱門》的魔術聯演。","兩度與陳俊太教授登上陽明交大藝術季大舞臺。","在新竹仁愛兒童之家公益演出，也曾到心路基金會表演、教魔術。","連續兩年受邀於教育學程聖誕晚會演出。"]],["h","我的魔術道具"],["photo",{"src":"images/magic-wand-and-rabbits.webp","width":1386,"height":725,"alt":"一支黑色魔杖和大小不同的紅色海綿兔排在桌面上。","caption":"我在 2025 年 4 月留下的道具照。一支魔杖，配上大小不同的海綿兔。"}]],"link":null,"coverInfo":{"width":1200,"height":900,"alt":"我戴著紅帶高帽，在戶外舞臺上演出魔術。","caption":"2025 年 5 月，新竹「藝影之都」戶外魔術喜劇。"},"related":["hot-door","stage-hosting","community-magic"],"links":[{"text":"看《綜藝大熱門》官方精華","url":"https://www.youtube.com/watch?v=JPm9x3YrBvk"}]},
+  {"id":"schweitzer","title":"寶山國中史懷哲：英語與桌邊魔術","cat":"教學現場","date":"2024 年 7 月","cover":"images/baoshan-card-table.webp","summary":"在寶山國中的暑期營隊，我帶七、八年級學生上混齡英文課，也把紙牌拿到桌邊，留時間讓學生自己練習和表演。","role":"英文及魔術教學、陽明交大校園參訪共同規劃","for":"寶山國中學生","body":[["h","同一張桌子，不同的學習速度"],["p","小組裡有七年級和八年級學生。我替先完成任務的人準備英語謎題，讓其他同學還有時間把手上的活動做完。帶魔術課時，則先在桌邊示範，把道具交回去，讓學生練好了演給彼此看。"],["h","把活動帶出教室"],["p","我和團隊也共同負責陽明交大的校園參訪，一起發想、試玩，再依現場需要調整遊戲。師培中心的特刊裡，我的署名是「派大星老師」。可以翻到印刷頁第 11 頁看當時的紀錄。"]],"link":{"text":"讀第 92 期史懷哲特刊","url":"https://drive.google.com/file/d/19gs3KYENz0OSd_yRIpgEjiWtvg0ECX2N/view"},"related":["dongguan-teaching","community-magic"],"coverInfo":{"width":1120,"height":983,"alt":"我戴著高帽，在寶山國中的桌邊拿起一張紙牌。","caption":"2024 年 7 月，寶山國中營隊選修博覽會。我在桌邊準備紙牌示範，畫面取自當時的活動紀錄。"}}
 ]
 </script>
 <a class="skip" id="skip" href="#main-content">跳至主要內容</a>
@@ -199,7 +223,8 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
       <p class="roles">英文師資生・才藝講師・課程設計者</p>
       <p class="intro-copy">我在陽明交大念材料，也雙主修外文、修英文教育學程。課堂上，我會拿出魔術道具教文法。下了課，也在新竹的舞臺上變魔術、說單口喜劇。</p>
       <div class="actions">
-        <a class="button" href="#work-grammar-magic">先看祈使句教案 <span aria-hidden="true">→</span></a>
+        <a class="button" href="#work-hot-door">看《綜藝大熱門》演出 <span aria-hidden="true">→</span></a>
+        <a class="text-link" href="#work-grammar-magic">看魔術怎麼教英文</a>
         <a class="text-link" href="#works">全部作品 <span aria-hidden="true">→</span></a>
       </div>
     </div>
@@ -214,14 +239,14 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
   <section class="featured section" id="featured" aria-labelledby="featured-title"><div class="wrap">
     <div class="heading"><h2 class="section-title" id="featured-title" tabindex="-1">精選作品</h2><a class="text-link" href="#works">看全部作品 <span aria-hidden="true">→</span></a></div>
     <div class="feature-layout">
-      <a class="feature feature-main" href="#work-grammar-magic">
-        <div class="props" aria-hidden="true"><span class="props-scene"><i class="envelope"></i><i class="ball red"></i><i class="ball blue"></i><i class="ball yellow"></i></span></div>
-        <div class="feature-body"><span class="category">國一英文教案</span><h3>文法 × 魔術：祈使句</h3><p>「Please choose one.」學生照著指令選一顆球，我才打開預測信封。等預言揭曉，再回頭看剛才那句英文。</p></div>
+      <a class="feature feature-main" href="#work-hot-door">
+        <div class="film-still"><img src="https://i.ytimg.com/vi/JPm9x3YrBvk/hqdefault.jpg" width="480" height="360" loading="lazy" alt="《綜藝大熱門》小鐘與清交魔術社聯合表演的官方影片封面。"><span>▶ 節目精華 · 13:19</span></div>
+        <div class="feature-body"><span class="category">電視魔術演出</span><h3>我和清交魔術社上《綜藝大熱門》</h3><p>從校園魔術晚會走進攝影棚，和小鐘同臺演出。點進來就能看節目官方剪出的這一段。</p></div>
       </a>
       <div class="side-features">
-        <a class="feature feature-side" href="#work-chem-site">
-          <div><span class="category">教學網站</span><h3>互動化學教學網站</h3><p>把學測化學的詳解拆成一步一步，讓學生停在自己卡住的地方。</p></div>
-          <div class="chem-art" aria-hidden="true"><span class="element"><small>6</small><b>C</b></span></div>
+        <a class="feature feature-side" href="#work-grammar-magic">
+          <div><span class="category">國一英文教案</span><h3>文法 × 魔術：祈使句</h3><p>「Please choose one.」學生照著指令選球，等預言揭曉，再回頭看這句英文。</p></div>
+          <img class="stage-thumb handout-thumb" src="images/demo-grammar.webp" width="1250" height="733" loading="lazy" alt="課堂簡報中的兩種選球指令">
         </a>
         <a class="feature feature-side" href="#work-magic">
           <div><span class="category">舞臺演出</span><h3>魔術表演</h3><p>2025 年 5 月，我在「藝影之都」的戶外舞臺演出魔術喜劇。</p></div>
@@ -230,6 +255,11 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
       </div>
     </div>
   </div></section>
+
+  <section class="section wrap" aria-labelledby="field-title">
+    <div class="heading"><h2 class="section-title" id="field-title">從教室到舞臺</h2><a class="text-link" href="#works">瀏覽作品集 <span aria-hidden="true">→</span></a></div>
+    <div class="field-grid" id="field-grid"></div>
+  </section>
 
   <section class="section wrap about-layout" id="do" aria-labelledby="about-title">
     <h2 class="section-title" id="about-title" tabindex="-1">關於我</h2>
@@ -245,7 +275,7 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
       <div><h3>教學與培訓</h3><dl>
         <div><dt>苑裡高中</dt><dd>學測化學教學、互動教材製作</dd></div>
         <div><dt>國王才藝</dt><dd>教案編寫、才藝師資培訓</dd></div>
-        <div><dt>史懷哲 14.0 計畫</dt><dd>寶山國中魔術課</dd></div>
+        <div><dt>2024 寶山國中史懷哲營隊</dt><dd>英語、魔術與校園參訪設計</dd></div>
         <div><dt>東莞臺商子弟學校</dt><dd>十四天海外見習，教國中英文、國小與幼兒園魔術</dd></div>
         <div><dt>虎林國小</dt><dd>英文課輔老師</dd></div>
         <div><dt>聯電聖心</dt><dd>個案輔導，英文與才藝教學</dd></div>
@@ -255,7 +285,7 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
         <div><dt>國立陽明交通大學</dt><dd>材料科學與工程學系，雙主修外文、修習英文教育學程</dd></div>
         <div><dt>清交教育學程小梅竹</dt><dd>2026 年教案展演第三名</dd></div>
         <div><dt>新竹市街頭藝人執照</dt><dd>魔術表演</dd></div>
-        <div><dt>站立風城喜劇爭霸賽</dt><dd>新人賽冠軍</dd></div>
+        <div><dt>2024 站立風城喜劇爭霸賽</dt><dd>前哨戰並列冠軍</dd></div>
         <div><dt>陽明交大貢丸喜劇社</dt><dd>創社社長、單口喜劇演出</dd></div>
       </dl></div>
     </div>
@@ -266,7 +296,7 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
   <h1 class="page-title" id="works-title" tabindex="-1">全部作品</h1>
   <div class="filters" id="pills-all" role="group" aria-label="依作品分類篩選"></div>
   <p class="count" id="count" role="status" aria-live="polite" aria-atomic="true"></p>
-  <div class="entries" id="grid-all"></div>
+  <div class="work-grid" id="grid-all"></div>
 </section></div>
 <div id="v-work" hidden></div>
 </main>
@@ -293,7 +323,7 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
   const works = JSON.parse(document.getElementById('works-data').textContent);
   const worksById = new Map(works.map(work => [work.id, work]));
   const allLabel = '全部作品';
-  const CAT = ['教案設計', '教學網站', '師資培訓', '教學現場', '表演', '喜劇'];
+  const CAT = ['教案設計', '教學網站', '師資培訓', '教學現場', '表演', '喜劇', '採訪與創作', '研究與設計'];
   const categories = [allLabel, ...new Set([...CAT, ...works.map(work => work.cat)])];
   const filters = document.getElementById('pills-all');
   const entries = document.getElementById('grid-all');
@@ -321,7 +351,7 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
       button.setAttribute('aria-pressed', String(button.textContent === category));
     }
     const selected = category === allLabel ? works : works.filter(work => work.cat === category);
-    entries.innerHTML = selected.map(work => entry(work)).join('');
+    entries.innerHTML = selected.map(work => tile(work)).join('');
     count.textContent = category + '，共 ' + selected.length + ' 件';
   }
 
@@ -333,19 +363,51 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
     filters.append(button);
   }
   filterWorks(allLabel);
+  const fieldIds = ['chem-site','schweitzer','stage-hosting','kings-lessons','hsinchu-comedy-interview','gongwan'];
+  document.getElementById('field-grid').innerHTML = fieldIds.map(id => tile(worksById.get(id), 'h3')).join('');
+
+  function filmPoster(id) {
+    return 'https://i.ytimg.com/vi/' + encodeURIComponent(id) + '/hqdefault.jpg';
+  }
+
+  function tile(work, heading = 'h2') {
+    const src = work.cover || (work.video ? filmPoster(work.video.id) : '');
+    const visual = src ? '<div class="tile-image"><img src="' + escapeHtml(src) + '" alt="" loading="lazy" decoding="async"></div>' : '';
+    const date = work.date ? ' <span class="tile-date">／ ' + escapeHtml(work.date) + '</span>' : '';
+    return '<a class="work-tile" href="#work-' + escapeHtml(work.id) + '">' + visual +
+      '<span class="category">' + escapeHtml(work.cat) + date + '</span>' +
+      '<' + heading + '>' + escapeHtml(work.title) + '</' + heading + '><p>' + escapeHtml(work.summary) + '</p></a>';
+  }
+
+  function photo(asset) {
+    return '<figure class="detail-photo"><img src="' + escapeHtml(asset.src) + '" alt="' + escapeHtml(asset.alt) +
+      '" width="' + Number(asset.width) + '" height="' + Number(asset.height) + '" loading="lazy" decoding="async">' +
+      (asset.caption ? '<figcaption class="photo-caption">' + escapeHtml(asset.caption) + '</figcaption>' : '') + '</figure>';
+  }
+
+  function film(video) {
+    const id = escapeHtml(video.id);
+    const start = Number(video.start) || 0;
+    const watch = 'https://www.youtube.com/watch?v=' + id + (start ? '&amp;t=' + start + 's' : '');
+    return '<figure class="film-block"><div class="video-frame"><button type="button" class="play-film" data-film="' + id +
+      '" data-start="' + start + '" aria-label="播放' + escapeHtml(video.title) + '"><img src="' + filmPoster(video.id) +
+      '" alt="" width="480" height="360"><span>▶ 播放影片</span></button></div><figcaption>' + escapeHtml(video.caption) +
+      '</figcaption><a href="' + watch + '" rel="noopener" target="_blank">在 YouTube 觀看 ↗</a></figure>';
+  }
 
   function paragraph([type, value]) {
     if (type === 'h') return `<h2>${escapeHtml(value)}</h2>`;
     if (type === 'ul') return `<ul>${value.map(item => '<li>' + escapeHtml(item) + '</li>').join('')}</ul>`;
+    if (type === 'photo') return photo(value);
+    if (type === 'video') return film(value);
     return `<p>${escapeHtml(value)}</p>`;
   }
 
   function projectPhoto(work) {
+    if (work.video) return film(work.video);
     if (!work.cover) return '';
-    const isStage = work.id === 'magic';
-    const alt = isStage ? '我穿著黑西裝、戴紅帶高帽，獨自在戶外舞臺演出。' : work.title;
-    const caption = isStage ? '<figcaption class="photo-caption">2025 年 5 月，我在「藝影之都」演出戶外魔術喜劇。</figcaption>' : '';
-    return `<figure class="detail-photo"><img src="${escapeHtml(work.cover)}" alt="${escapeHtml(alt)}" decoding="async"${isStage ? ' width="1200" height="900"' : ''}>${caption}</figure>`;
+    if (work.coverInfo) return photo({src:work.cover,...work.coverInfo});
+    return '<figure class="detail-photo"><img src="' + escapeHtml(work.cover) + '" alt="' + escapeHtml(work.title) + '"></figure>';
   }
 
   function detail(work) {
@@ -354,14 +416,14 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
       'trainer-course':['kings-lessons','schweitzer'], 'kings-lessons':['trainer-course','grammar-magic'],
       'gongwan':['magic','trainer-course'], 'magic':['grammar-magic','gongwan'], 'schweitzer':['magic','kings-lessons']
     };
-    const related = relatedIds[work.id]?.map(id => worksById.get(id)).filter(Boolean) ??
+    const related = (work.related || relatedIds[work.id])?.map(id => worksById.get(id)).filter(Boolean) ??
       works.filter(other => other.id !== work.id).slice(0, 2);
     const facts = [['我負責',work.role], ['對象',work.for], ['時間',work.date]].filter(([,value]) => value);
     return `<div class="wrap">
       <div class="detail-head">
         <a class="back" href="#works"><span aria-hidden="true">←</span> 全部作品</a>
         <p class="category">${escapeHtml(work.cat)}</p>
-        <h1 class="detail-title" id="detail-title" tabindex="-1">${escapeHtml(work.title)}</h1>
+        <h1 class="detail-title" id="detail-title" tabindex="-1">${escapeHtml(work.title).replace(/《[^《》]+》/g, name => '<span class="work-name">' + name + '</span>')}</h1>
         <p class="detail-summary">${escapeHtml(work.summary)}</p>
       </div>
       <div class="detail-body">
@@ -369,6 +431,7 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
         <aside class="facts" aria-label="作品資訊"><dl>${facts.map(([label,value]) =>
           '<dt>' + label + '</dt><dd>' + escapeHtml(value) + '</dd>').join('')}</dl>
           ${work.link ? '<a class="button" href="' + escapeHtml(work.link.url) + '">' + escapeHtml(work.link.text) + ' <span aria-hidden="true">↗</span></a>' : ''}
+          ${work.links?.length ? '<div class="source-links">' + work.links.map(link => '<a href="' + escapeHtml(link.url) + '">' + escapeHtml(link.text) + ' ↗</a>').join('') + '</div>' : ''}
         </aside>
       </div>
       ${related.length ? '<section class="related" aria-labelledby="related-title"><div class="heading"><h2 class="section-title" id="related-title">延伸作品</h2></div><div class="entries">' +
@@ -388,6 +451,7 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
     const work = hash.startsWith('work-') ? worksById.get(hash.slice(5)) : null;
     const view = work ? 'work' : hash === 'works' ? 'works' : 'home';
     if (work) views.work.innerHTML = detail(work);
+    else views.work.replaceChildren();
     for (const [name,element] of Object.entries(views)) element.hidden = view !== name;
     document.title = work ? work.title + '｜羊羊老師' : view === 'works' ? '全部作品｜羊羊老師' : homeTitle;
     const currentNav = view === 'home' ? section : 'works';
@@ -417,6 +481,19 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
     }
   });
   window.addEventListener('hashchange', () => route());
+  views.work.addEventListener('click', event => {
+    const play = event.target.closest('button[data-film]');
+    if (!play) return;
+    const player = document.createElement('iframe');
+    player.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(play.dataset.film) +
+      '?autoplay=1&playsinline=1&start=' + (Number(play.dataset.start) || 0);
+    player.title = play.getAttribute('aria-label');
+    player.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    player.referrerPolicy = 'strict-origin-when-cross-origin';
+    player.allowFullscreen = true;
+    play.replaceWith(player);
+    player.focus();
+  });
   route(false);
 
   // 亮暗切換：按一下換成另一種，記在 yy-theme（和 plan/ 共用）
