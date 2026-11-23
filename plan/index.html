@@ -15,8 +15,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <script>
-  /* 深淺色偏好在畫面出現前套用，避免閃一下 */
-  try { var t = localStorage.getItem('yy-lifeplan-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+  /* 深淺色偏好在畫面出現前套用，避免閃一下（yy-theme 和作品集共用；舊版存在 yy-lifeplan-theme） */
+  try { var t = localStorage.getItem('yy-theme') || localStorage.getItem('yy-lifeplan-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
 <!--
   羊羊的人生計劃（私人專案推進板）v1.0｜2026-11-22（Claude）
@@ -115,6 +115,8 @@ main:focus{outline:0}
 .tabs a{padding:8px 14px;border-radius:9px;text-decoration:none;color:var(--ink2);font-weight:500}
 .tabs a:hover{background:var(--sunken)}
 .tabs a[aria-current=page]{background:var(--surface);color:var(--ink);font-weight:700;box-shadow:inset 0 0 0 1px var(--line)}
+.theme-btn{width:40px;height:40px;border:1px solid var(--line);border-radius:10px;color:var(--ink2)}
+.theme-btn:hover{border-color:var(--edge);background:var(--surface)}
 .sync-dot{width:9px;height:9px;border-radius:50%;background:var(--good);flex:none}
 .sync-dot.busy{background:var(--warn)}.sync-dot.err{background:var(--danger)}
 .no-data .tabs,.no-data .bottom,.no-data .add-top{display:none}
@@ -529,6 +531,7 @@ dialog::backdrop{background:rgba(15,17,20,.45)}
       <a href="#today" data-nav="today">今天</a><a href="#projects" data-nav="projects">專案</a><a href="#plan" data-nav="plan">藍圖</a><a href="#review" data-nav="review">回顧</a><a href="#data" data-nav="data">資料</a>
     </nav>
     <span class="sync-dot" id="sync-dot" hidden></span>
+    <button type="button" class="icon-btn theme-btn" id="theme-btn" data-act="toggle-theme" aria-label="切換成深色"></button>
     <button type="button" class="btn primary add-top" data-act="quick-add" aria-label="新增"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>新增</span></button>
   </div>
 </header>
@@ -541,7 +544,7 @@ dialog::backdrop{background:rgba(15,17,20,.45)}
 <script>
 (() => {
 'use strict';
-const KEY = 'yy-lifeplan-v1', META = 'yy-lifeplan-meta', PRE = 'yy-lifeplan-before-import', SYNC = 'yy-lifeplan-sync', THEME = 'yy-lifeplan-theme';
+const KEY = 'yy-lifeplan-v1', META = 'yy-lifeplan-meta', PRE = 'yy-lifeplan-before-import', SYNC = 'yy-lifeplan-sync', THEME = 'yy-theme', OLD_THEME = 'yy-lifeplan-theme';
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } },
@@ -599,6 +602,8 @@ const I = {
   check: ic('<path d="M5 12.5l4.5 4.5L19 7.5"/>', 16),
   plus: ic('<path d="M12 5v14M5 12h14"/>', 16),
   sun: ic('<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6L6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/>', 15),
+  sunL: ic('<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6L6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/>', 18),
+  moon: ic('<path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/>', 18),
   out: ic('<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4M16 3v4M9 14h6"/>', 15),
   dots: ic('<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/>'),
   back: ic('<path d="M15 18l-6-6 6-6"/>', 18),
@@ -1152,7 +1157,7 @@ function flushReview() { if (rvForm && document.body.contains(rvForm)) saveRevie
 
 /* ---------- 資料與設定 ---------- */
 function vData() {
-  const pr = S.profile, th = store.get(THEME) || 'auto', hasPre = !!store.get(PRE);
+  const pr = S.profile, th = store.get(THEME) || store.get(OLD_THEME) || 'auto', hasPre = !!store.get(PRE);
   return `<div class="page-head"><div><h1 class="hand">資料與設定</h1><p>資料存在哪裡、怎麼備份、怎麼讓手機和電腦看到同一份。</p></div></div>
   <div class="data-grid">
     <section class="card" aria-labelledby="h-store">
@@ -1704,14 +1709,24 @@ async function copyText(text) {
     ta.remove(); return ok;
   }
 }
+const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+const effectiveTheme = () => document.documentElement.dataset.theme || (darkQuery.matches ? 'dark' : 'light');
+function paintTheme() {
+  const dark = effectiveTheme() === 'dark', label = dark ? '切換成淺色' : '切換成深色', btn = $('#theme-btn');
+  if (btn) { btn.innerHTML = dark ? I.sunL : I.moon; btn.setAttribute('aria-label', label); btn.title = label; }
+  const meta = $('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', dark ? '#131417' : '#f6f5f1');
+}
 function setTheme(v) {
+  store.del(OLD_THEME);
   if (v === 'light' || v === 'dark') { store.set(THEME, v); document.documentElement.dataset.theme = v; }
   else { store.del(THEME); delete document.documentElement.dataset.theme; }
+  paintTheme();
 }
 
 /* ---------- 動作 ---------- */
 const ACT = {
   'close-modal': () => closeModal(),
+  'toggle-theme': () => { setTheme(effectiveTheme() === 'dark' ? 'light' : 'dark'); if (S && route().view === 'data') render(); },
   'quick-add': () => quickAdd(),
   'qa-task': () => taskForm(null, { plan: today() }),
   'qa-log': () => logForm(''),
@@ -1861,9 +1876,17 @@ document.addEventListener('toggle', e => {
 /* ---------- 開始 ---------- */
 load();
 syncLoad();
+if (!store.get(THEME) && store.get(OLD_THEME)) { store.set(THEME, store.get(OLD_THEME)); store.del(OLD_THEME); }
+paintTheme();
 render();
+darkQuery.addEventListener('change', paintTheme);
 window.addEventListener('hashchange', () => { flushReview(); render(); });
 window.addEventListener('storage', e => {
+  if (e.key === THEME) {
+    if (e.newValue === 'light' || e.newValue === 'dark') document.documentElement.dataset.theme = e.newValue; else delete document.documentElement.dataset.theme;
+    paintTheme(); if (S && route().view === 'data') render();
+    return;
+  }
   if (e.key !== KEY) return;
   if (!e.newValue) { S = null; render(); return; }
   try { const o = JSON.parse(e.newValue); if (o && o.state) { S = normalize(o.state); render(); } } catch (err) {}
