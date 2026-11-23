@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f6f5f1">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="人生計劃">
+<title>人生計劃</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231d2025'/%3E%3Cpath d='M18 34l10 10 18-24' fill='none' stroke='%23fff' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script>
+  /* 深淺色偏好在畫面出現前套用，避免閃一下 */
+  try { var t = localStorage.getItem('yy-lifeplan-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<!--
+  羊羊的人生計劃（私人專案推進板）v1.0｜2026-11-22（Claude）
+
+  給之後協作的 AI：
+  1. 單一 HTML，沒有建置步驟。放在作品集網站的 plan/ 底下，網址 https://yangyang-shengming.github.io/plan/
+  2. 程式是公開的，但「資料」只存在使用者自己的瀏覽器：localStorage 鍵 yy-lifeplan-v1（schemaVersion 1）。
+     不要把任何私人專案、待辦寫進這個檔案；預設資料只能放通用的新手範例。
+  3. 資料結構：profile、areas（人生領域）、goals（目標，horizon = year/three/life）、projects（專案）、
+     tasks（待辦，plan = 排在哪天做、repeat = daily/weekly/monthly）、logs（推進紀錄）、outputs（成果）、
+     reviews（週回顧，以 2026-W47 這種 ISO 週為鍵）。
+  4. 匯入：本站備份（app = yy-lifeplan）會整份取代，取代前的資料存在 yy-lifeplan-before-import 可復原；
+     「羊羊工作站 v2.0」的資料檔（app = yangyang-workstation）會合併進來，id 加上 ws- 前綴，重複匯入不會重複。
+  5. 同步（選用）：使用者自己貼 GitHub 金鑰（只開 Gist 讀寫），資料存成帳號裡的秘密 Gist，檔名 yy-lifeplan.json。
+     金鑰只存在該裝置的 localStorage（yy-lifeplan-sync）。
+  6. 改完在 390px 與 1366px 寬各看一次，確認沒有水平捲軸、主控台沒有錯誤。
+-->
+<style>
+/* VOICE   安靜、可靠、像一本自己的筆記本。打開就知道今天要做什麼。
+   COLOUR  暖白紙色底、炭灰字；每個人生領域一個顏色，只用在小圓點與色條；作品集的正紅只留給「今天」。
+   TYPE    標題用霞鶩文楷（和作品集一樣），內文思源黑體。
+   LAYOUT  筆電：上方分頁、雙欄；手機：底部五個分頁、單欄，對話框從底部滑出。 */
+:root{
+  --bg:#f6f5f1;--surface:#fff;--sunken:#efede7;--raise:#fbfaf7;
+  --ink:#1d2025;--ink2:#3b3f47;--muted:#62666e;--faint:#999da5;
+  --line:#e2e0d9;--line2:#ebe9e3;--edge:#c9c6be;
+  --btn:#1d2025;--btn-ink:#fff;
+  --accent:#c0182f;--accent-soft:#fbe8eb;
+  --good:#2f7d55;--good-soft:#e2f1e8;--good-ink:#1d5b3b;
+  --warn:#b7791f;--warn-soft:#fbf0d9;--warn-ink:#6f4708;
+  --danger:#b42318;--danger-soft:#fdeceb;
+  --focus:#2f6f9f;
+  --c-blue:#2f6f9f;--c-orange:#c45a22;--c-green:#2f8a5f;--c-purple:#7d4fb0;--c-red:#c0182f;--c-ochre:#9c7710;--c-slate:#56677a;--c-rose:#b0457a;--c-teal:#1d7f85;
+  --shadow:0 1px 2px rgba(20,22,26,.04),0 12px 32px -20px rgba(20,22,26,.3);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#131417;--surface:#1b1d21;--sunken:#24262b;--raise:#1f2125;
+  --ink:#eceef1;--ink2:#cdd0d6;--muted:#a3a7af;--faint:#70747c;
+  --line:#2e3036;--line2:#27292e;--edge:#474a52;
+  --btn:#eceef1;--btn-ink:#131417;
+  --accent:#ff6b7d;--accent-soft:#3b1d23;
+  --good:#4cbf84;--good-soft:#16301f;--good-ink:#9fe2bd;
+  --warn:#e2a443;--warn-soft:#332710;--warn-ink:#f3d08f;
+  --danger:#ff8a7f;--danger-soft:#3a1c1b;
+  --focus:#7fb3e0;
+  --c-blue:#6fa8d8;--c-orange:#ee8a55;--c-green:#5cc08d;--c-purple:#b08ae0;--c-red:#ff6b7d;--c-ochre:#d6ad48;--c-slate:#94a5b9;--c-rose:#e47fae;--c-teal:#56c2c7;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px -20px rgba(0,0,0,.7);
+  color-scheme:dark;
+}}
+:root[data-theme=dark]{
+  --bg:#131417;--surface:#1b1d21;--sunken:#24262b;--raise:#1f2125;
+  --ink:#eceef1;--ink2:#cdd0d6;--muted:#a3a7af;--faint:#70747c;
+  --line:#2e3036;--line2:#27292e;--edge:#474a52;
+  --btn:#eceef1;--btn-ink:#131417;
+  --accent:#ff6b7d;--accent-soft:#3b1d23;
+  --good:#4cbf84;--good-soft:#16301f;--good-ink:#9fe2bd;
+  --warn:#e2a443;--warn-soft:#332710;--warn-ink:#f3d08f;
+  --danger:#ff8a7f;--danger-soft:#3a1c1b;
+  --focus:#7fb3e0;
+  --c-blue:#6fa8d8;--c-orange:#ee8a55;--c-green:#5cc08d;--c-purple:#b08ae0;--c-red:#ff6b7d;--c-ochre:#d6ad48;--c-slate:#94a5b9;--c-rose:#e47fae;--c-teal:#56c2c7;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px -20px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+*{min-width:0}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 "Noto Sans TC","Microsoft JhengHei","PingFang TC","Heiti TC",system-ui,sans-serif;overflow-x:clip;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+button{cursor:pointer}
+a{color:inherit}
+h1,h2,h3,p,ul,ol,dl,dd,figure,fieldset{margin:0}
+ul,ol{padding:0;list-style:none}
+fieldset{border:0;padding:0;min-inline-size:0}
+legend{padding:0}
+svg{display:block;flex:none}
+[hidden]{display:none!important}
+.hand{font-family:"LXGW WenKai TC","Kaiti TC","DFKai-SB",serif;font-weight:700;letter-spacing:.01em}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px;border-radius:6px}
+.skip{position:absolute;left:12px;top:-60px;z-index:100;background:var(--btn);color:var(--btn-ink);padding:8px 14px;border-radius:8px;text-decoration:none}
+.skip:focus{top:12px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+main:focus{outline:0}
+
+/* ---------- 頂部列 ---------- */
+.top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1180px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:auto}
+.mark{width:36px;height:36px;border-radius:11px;background:var(--btn);color:var(--btn-ink);display:grid;place-items:center;font-size:19px}
+.brand b{display:block;font-size:19px;line-height:1.15}
+.brand small{display:block;font-size:12px;color:var(--muted);line-height:1.35}
+.tabs{display:flex;gap:2px}
+.tabs a{padding:8px 14px;border-radius:9px;text-decoration:none;color:var(--ink2);font-weight:500}
+.tabs a:hover{background:var(--sunken)}
+.tabs a[aria-current=page]{background:var(--surface);color:var(--ink);font-weight:700;box-shadow:inset 0 0 0 1px var(--line)}
+.sync-dot{width:9px;height:9px;border-radius:50%;background:var(--good);flex:none}
+.sync-dot.busy{background:var(--warn)}.sync-dot.err{background:var(--danger)}
+.no-data .tabs,.no-data .bottom,.no-data .add-top{display:none}
+.bottom{display:none}
+
+/* ---------- 按鈕與輸入 ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:600;font-size:14px;text-decoration:none;white-space:nowrap;line-height:1.2}
+.btn:hover{border-color:var(--edge)}
+.btn.primary{background:var(--btn);border-color:var(--btn);color:var(--btn-ink)}
+.btn.primary:hover{filter:brightness(1.15)}
+.btn.sm{min-height:34px;padding:0 12px;font-size:13px}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--ink2)}
+.btn.ghost:hover{background:var(--sunken)}
+.btn.danger{color:var(--danger)}
+.btn.primary.danger{background:var(--danger);border-color:var(--danger);color:#fff}
+.icon-btn{width:36px;height:36px;display:inline-grid;place-items:center;border-radius:9px;border:0;background:transparent;color:var(--muted);padding:0;flex:none}
+.icon-btn:hover{background:var(--sunken);color:var(--ink)}
+.in{width:100%;height:42px;border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:0 12px;color:var(--ink);font-size:15px}
+textarea.in{height:auto;padding:10px 12px;line-height:1.6;resize:vertical}
+select.in{padding-right:8px}
+.in:focus{outline:0;border-color:var(--focus);box-shadow:0 0 0 3px color-mix(in srgb,var(--focus) 22%,transparent)}
+.in::placeholder{color:var(--faint)}
+.link{color:var(--ink2);font-weight:600;font-size:13.5px;text-decoration:none;white-space:nowrap}
+.link:hover{text-decoration:underline}
+
+/* ---------- 共用區塊 ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 22px}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.card-h h2{font-size:17px;font-weight:800;line-height:1.35}
+.card-h .aside{font-size:13px;color:var(--muted)}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:30px 0 22px}
+.page-head h1{font-size:clamp(32px,4vw,44px);line-height:1.15}
+.page-head p{color:var(--muted);margin-top:6px;max-width:40em}
+.stack{display:flex;flex-direction:column;gap:20px}
+.empty-line{color:var(--muted);font-size:14px;padding:6px 0}
+.area-tag{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:color-mix(in srgb,var(--ac) 78%,var(--ink));line-height:1.4}
+.area-tag i,.chip-p i,.dot{width:8px;height:8px;border-radius:50%;background:var(--ac);flex:none;display:inline-block}
+.prog{display:block;height:6px;border-radius:3px;background:var(--sunken);overflow:hidden;flex:1}
+.prog i{display:block;height:100%;border-radius:3px;background:var(--good)}
+.prog.lg{height:8px;margin:0 0 6px}
+.due{white-space:nowrap}
+.due.late{color:var(--danger);font-weight:700}
+.due.soon{color:var(--warn-ink);font-weight:700}
+.banner{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin-top:18px;padding:12px 16px;border-radius:14px;background:var(--warn-soft);color:var(--warn-ink);font-size:14px}
+.banner .btn{margin-left:auto}
+.banner.err{background:var(--danger-soft);color:var(--danger)}
+details>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:var(--ink2);padding:10px 0 4px;width:max-content;max-width:100%}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .15s;margin-right:2px}
+details[open]>summary::before{transform:rotate(45deg)}
+
+/* ---------- 待辦列 ---------- */
+.tasks li{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:start;padding:11px 0;border-top:1px solid var(--line2)}
+.tasks li:first-child{border-top:0}
+.check{width:26px;height:26px;margin-top:1px;border-radius:50%;border:1.8px solid var(--edge);background:transparent;display:grid;place-items:center;color:transparent;padding:0}
+.check:hover{border-color:var(--good);color:var(--good)}
+.done .check{background:var(--good);border-color:var(--good);color:var(--btn-ink)}
+.t-title{display:block;font-weight:600;font-size:15px;line-height:1.5;overflow-wrap:anywhere}
+.done .t-title{color:var(--faint);text-decoration:line-through;text-decoration-color:var(--edge)}
+.t-meta{display:flex;flex-wrap:wrap;gap:3px 12px;margin-top:3px;font-size:12.5px;color:var(--muted)}
+.t-meta>*{display:inline-flex;align-items:center;gap:5px}
+.chip-p{text-decoration:none;color:var(--ink2);font-weight:500;overflow-wrap:anywhere}
+.chip-p:hover{text-decoration:underline}
+.t-acts{display:flex;align-items:center;gap:2px}
+.mini{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:12.5px;font-weight:600;color:var(--ink2);white-space:nowrap}
+.mini:hover{border-color:var(--edge)}
+.mini.on{background:var(--warn-soft);border-color:transparent;color:var(--warn-ink)}
+.quick{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.quick .grow{flex:1 1 220px}
+.quick select.in,.quick input[type=date]{flex:0 1 190px;width:auto}
+.more-note{font-size:13px;color:var(--muted);padding:6px 0 0 40px}
+
+/* ---------- 今天 ---------- */
+.today-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:24px;align-items:end;padding:32px 0 24px}
+.eyebrow{font-size:13.5px;color:var(--muted);font-weight:500}
+.today-head h1{font-size:clamp(40px,5.4vw,60px);line-height:1.08;margin:4px 0 10px}
+.today-head .sub{color:var(--ink2);font-size:16px}
+.year{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 18px}
+.year-top{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px;color:var(--muted);margin-bottom:10px}
+.year-top b{font-size:22px;color:var(--ink);font-weight:800}
+.weeks{display:grid;gap:3px}
+.weeks i{aspect-ratio:1;border-radius:2px;background:var(--sunken)}
+.weeks i.past{background:color-mix(in srgb,var(--ink) 55%,var(--surface))}
+.weeks i.now{background:var(--accent)}
+.year small{display:block;margin-top:10px;font-size:12.5px;color:var(--muted)}
+.cols{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:20px;align-items:start;padding-bottom:56px}
+.focus-card{border-color:color-mix(in srgb,var(--accent) 22%,var(--line))}
+.focus-card .card-h h2::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:8px;vertical-align:3px}
+.resume{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:12px}
+.rc{position:relative;border:1px solid var(--line);border-radius:14px;padding:15px 16px 14px 19px;background:var(--raise);overflow:hidden;display:flex;flex-direction:column}
+.rc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ac)}
+.rc-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12.5px}
+.rc h3{font-size:16.5px;font-weight:800;line-height:1.4;margin:5px 0 10px}
+.rc h3 a{text-decoration:none}
+.rc h3 a:hover{text-decoration:underline}
+.rc dl{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.rc dl div{display:grid;grid-template-columns:4.4em minmax(0,1fr);gap:8px;font-size:13.5px;line-height:1.55}
+.rc dt{color:var(--muted)}
+.rc dd{overflow-wrap:anywhere}
+.rc .nx dd{font-weight:700}
+.rc .bk dd{color:var(--warn-ink)}
+.rc time{color:var(--faint);font-size:12px;margin-left:4px;white-space:nowrap}
+.rc-prog{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin:-2px 0 12px}
+.rc-acts{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:auto}
+.lk{display:inline-flex;align-items:center;gap:5px;max-width:100%;height:32px;padding:0 10px;border-radius:8px;background:var(--sunken);font-size:12.5px;font-weight:600;color:var(--ink2);text-decoration:none}
+.lk span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lk:hover{background:var(--line)}
+.rc-acts .btn{margin-left:auto}
+.soon li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--line2)}
+.soon li:first-child{border-top:0}
+.dbadge{display:flex;flex-direction:column;align-items:center;justify-content:center;height:44px;border-radius:10px;background:var(--sunken);line-height:1.1}
+.dbadge b{font-size:17px;font-weight:800}
+.dbadge small{font-size:11px;color:var(--muted)}
+.soon .s-t{display:block;font-weight:600;font-size:14px;line-height:1.45;overflow-wrap:anywhere;text-decoration:none;text-align:left;background:none;border:0;padding:0;color:var(--ink)}
+.soon .s-t:hover{text-decoration:underline}
+.soon small.s-m{display:block;font-size:12.5px;color:var(--muted)}
+.pulse li{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:14px}
+.pulse .ap-name{font-weight:600}
+.pulse .ap-meta{margin-left:auto;color:var(--muted);font-size:12.5px;text-align:right}
+.pulse .ap-meta.stale{color:var(--warn-ink);font-weight:600}
+.yg li{padding:8px 0;border-top:1px solid var(--line2)}
+.yg li:first-child{border-top:0}
+.yg .yg-t{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px}
+.yg .yg-m{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin:5px 0 0 16px}
+.yg .prog{max-width:120px}
+.rv-cta{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
+.rv-cta p{opacity:.8;font-size:14px;margin:4px 0 14px}
+.rv-cta .btn{background:var(--btn-ink);color:var(--btn);border-color:var(--btn-ink)}
+.rv-cta h2{font-size:17px;font-weight:800}
+.rv-ok{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--good-ink);background:var(--good-soft);border-color:transparent}
+
+/* ---------- 專案看板 ---------- */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin-bottom:18px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:13.5px;font-weight:600;color:var(--ink2);white-space:nowrap}
+.chip:hover{border-color:var(--edge)}
+.chip[aria-pressed=true]{background:var(--btn);border-color:var(--btn);color:var(--btn-ink)}
+.chip b{font-weight:600;font-size:12px;opacity:.6}
+.chip .dot{width:7px;height:7px}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted);cursor:pointer}
+.toggle input{width:17px;height:17px;accent-color:var(--btn)}
+.board{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:14px;align-items:start;padding-bottom:24px}
+.col{background:var(--sunken);border-radius:16px;padding:10px}
+.col>header{display:flex;align-items:center;gap:8px;padding:4px 6px 10px;font-weight:800;font-size:14px}
+.col>header b{margin-left:auto;color:var(--muted);font-size:13px;font-weight:600}
+.st{width:10px;height:10px;border-radius:50%;flex:none;border:2px solid var(--muted)}
+.st-doing{background:var(--ink);border-color:var(--ink)}
+.st-idea{border-style:dashed}
+.st-pause{background:repeating-linear-gradient(135deg,var(--muted) 0 2px,transparent 2px 4px)}
+.st-done{background:var(--good);border-color:var(--good)}
+.p-card{display:block;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--ac);border-radius:12px;padding:12px 14px;margin-bottom:8px;text-decoration:none;color:inherit}
+.p-card:hover{border-color:var(--edge);border-left-color:var(--ac);box-shadow:var(--shadow)}
+.p-card h3{font-size:15.5px;font-weight:800;line-height:1.45;margin:3px 0 6px;overflow-wrap:anywhere}
+.p-next{font-size:13.5px;color:var(--ink2);line-height:1.55;overflow-wrap:anywhere}
+.p-next span{display:block;font-size:11.5px;color:var(--muted);font-weight:700}
+.p-block{display:flex;gap:6px;align-items:flex-start;margin-top:8px;font-size:12.5px;color:var(--warn-ink);background:var(--warn-soft);border-radius:8px;padding:6px 8px;overflow-wrap:anywhere}
+.p-block svg{margin-top:2px}
+.p-foot{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;color:var(--muted)}
+.p-foot .due{margin-left:auto}
+.col-empty{font-size:13px;color:var(--faint);padding:2px 6px 8px}
+.arch li{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line2);font-size:14px}
+.arch a{font-weight:600;text-decoration:none;margin-right:auto}
+.arch a:hover{text-decoration:underline}
+
+/* ---------- 專案頁 ---------- */
+.back{display:inline-flex;align-items:center;gap:4px;min-height:40px;margin-top:14px;color:var(--muted);font-weight:600;font-size:14px;text-decoration:none}
+.back:hover{color:var(--ink)}
+.p-head{padding:4px 0 22px}
+.p-tags{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.goal-tag{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--muted);font-weight:600}
+.p-head h1{font-size:clamp(30px,4vw,44px);line-height:1.2;margin:8px 0 8px;overflow-wrap:anywhere}
+.p-head .lead{color:var(--ink2);font-size:16px;max-width:46em}
+.facts{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:16px;font-size:13.5px;color:var(--muted)}
+.facts b{color:var(--ink);font-weight:700}
+.status-sel{height:36px;border-radius:999px;border:1px solid var(--line);background:var(--surface);padding:0 10px 0 14px;font-weight:700;font-size:14px;color:var(--ink)}
+.p-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;align-items:start;padding-bottom:56px}
+.next-box{background:var(--btn);color:var(--btn-ink);border-radius:18px;padding:18px 20px}
+.nb-h{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;font-weight:700;opacity:.75}
+.nb-h span{display:inline-flex;align-items:center;gap:6px}
+.nb-edit{border:0;background:color-mix(in srgb,var(--btn-ink) 14%,transparent);color:inherit;border-radius:8px;height:30px;padding:0 12px;font-size:13px;font-weight:700}
+.next-box p{font-size:18px;font-weight:700;line-height:1.55;margin-top:6px;overflow-wrap:anywhere}
+.next-box p.empty{font-size:15px;font-weight:500;opacity:.8}
+.next-box small{display:block;margin-top:10px;font-size:13px;opacity:.7;overflow-wrap:anywhere}
+.block-box{display:flex;gap:10px;align-items:flex-start;background:var(--warn-soft);color:var(--warn-ink);border-radius:14px;padding:12px 16px;font-size:14px;overflow-wrap:anywhere}
+.block-box svg{margin-top:3px}
+.block-box b{display:block;font-size:12.5px}
+.tl li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px}
+.tl time{font-size:13px;color:var(--muted);font-weight:600;padding-top:1px;text-align:right;white-space:nowrap}
+.tl-b{position:relative;border-left:2px solid var(--line);padding:0 0 18px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 6px}
+.tl-b::before{content:"";position:absolute;left:-6px;top:7px;width:10px;height:10px;border-radius:50%;background:var(--ac);box-shadow:0 0 0 3px var(--surface)}
+.tl li:last-child .tl-b{padding-bottom:2px}
+.tl-b p{font-size:14.5px;line-height:1.6;overflow-wrap:anywhere}
+.tl-b .tl-next{font-size:13px;color:var(--muted)}
+.tl-b .lk{justify-self:start;margin-top:6px;grid-column:1}
+.tl-b .icon-btn{grid-column:2;grid-row:1;width:30px;height:30px;margin-top:-4px}
+.links li+li,.outs li+li{border-top:1px solid var(--line2)}
+.link-row{display:flex;align-items:center;gap:10px;padding:9px 0;text-decoration:none;font-size:14px;font-weight:600}
+.link-row span{overflow-wrap:anywhere}
+.link-row small{margin-left:auto;color:var(--muted);font-weight:400;font-size:12px;white-space:nowrap}
+.link-row:hover span{text-decoration:underline}
+.outs li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;padding:9px 0}
+.outs .o-t{font-weight:600;font-size:14px;overflow-wrap:anywhere}
+.outs .o-m{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12.5px;color:var(--muted);grid-column:1}
+.outs .icon-btn{grid-row:1/3;grid-column:2;width:32px;height:32px}
+.vis{display:inline-block;padding:0 7px;border-radius:999px;background:var(--sunken);font-size:11.5px;font-weight:700;color:var(--ink2)}
+.vis.public{background:var(--good-soft);color:var(--good-ink)}
+.vis.company{background:color-mix(in srgb,var(--c-orange) 16%,var(--surface));color:color-mix(in srgb,var(--c-orange) 70%,var(--ink))}
+.about dt{font-size:12.5px;color:var(--muted);font-weight:700;margin-top:12px}
+.about dt:first-child{margin-top:0}
+.about dd{font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+.manage{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ---------- 藍圖 ---------- */
+.plan-top{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:20px;margin-bottom:20px}
+.vision-text{font-size:clamp(20px,2.2vw,26px);line-height:1.6;overflow-wrap:anywhere}
+.life{display:grid;grid-template-columns:auto repeat(10,minmax(0,1fr));gap:4px;align-items:center;max-width:460px}
+.life span{font-size:11px;color:var(--muted);padding-right:6px;text-align:right;white-space:nowrap}
+.life i{aspect-ratio:1;border-radius:4px;background:var(--sunken)}
+.life i.past{background:color-mix(in srgb,var(--ink) 55%,var(--surface))}
+.life i.now{background:linear-gradient(90deg,var(--accent) var(--p),color-mix(in srgb,var(--accent) 22%,var(--surface)) var(--p))}
+.life i.void{background:transparent}
+.life-note{font-size:13.5px;color:var(--ink2);margin-top:14px}
+.areas{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:16px;padding-bottom:56px}
+.area-card{border-top:4px solid var(--ac);display:flex;flex-direction:column}
+.ac-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ac-h h2{font-size:20px;font-weight:800;margin-right:auto}
+.ac-h .dot{width:12px;height:12px}
+.ac-vision{display:block;width:100%;text-align:left;font-size:14.5px;line-height:1.65;background:var(--raise);border:1px solid var(--line2);border-radius:12px;padding:10px 12px;margin-bottom:12px;color:var(--ink);overflow-wrap:anywhere}
+.ac-vision span{display:block;font-size:11.5px;font-weight:700;color:var(--muted)}
+button.ac-vision{cursor:pointer;color:var(--muted);border-style:dashed}
+button.ac-vision:hover{border-color:var(--edge);color:var(--ink)}
+.ac-goals{margin-bottom:10px}
+.ac-goals h3{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.06em;margin:4px 0 2px}
+.goal button{display:grid;grid-template-columns:22px minmax(0,1fr);gap:6px;width:100%;text-align:left;border:0;background:transparent;padding:7px 6px;margin:0 -6px;border-radius:10px;color:var(--ink)}
+.goal button:hover{background:var(--sunken)}
+.g-ic{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;color:var(--ac);margin-top:1px}
+.goal.done .g-ic{background:var(--good);color:var(--btn-ink)}
+.goal.drop .g-title{color:var(--faint);text-decoration:line-through}
+.g-title{display:block;font-weight:700;font-size:14.5px;line-height:1.5;overflow-wrap:anywhere}
+.g-measure{display:block;font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+.g-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-top:3px}
+.g-meta .prog{max-width:90px}
+.ac-f{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-top:auto;padding-top:12px;border-top:1px solid var(--line2);font-size:13px;color:var(--muted)}
+.ac-f a{color:var(--ink2);font-weight:600}
+.area-add{min-height:140px;border:1.5px dashed var(--edge);border-radius:18px;background:transparent;color:var(--muted);font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px}
+.area-add:hover{color:var(--ink);border-color:var(--ink2)}
+
+/* ---------- 回顧 ---------- */
+.week-nav{display:flex;align-items:center;gap:6px}
+.week-nav b{font-size:15px;min-width:9.5em;text-align:center}
+.week-nav .icon-btn{border:1px solid var(--line);background:var(--surface)}
+.week-nav .icon-btn[aria-disabled=true]{opacity:.35;pointer-events:none}
+.rv-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:20px;align-items:start;padding-bottom:28px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.stats div{background:var(--sunken);border-radius:12px;padding:10px 12px}
+.stats b{display:block;font-size:24px;font-weight:800;line-height:1.2}
+.stats span{font-size:12.5px;color:var(--muted)}
+.wk-list>li{padding:10px 0;border-top:1px solid var(--line2)}
+.wk-list>li:first-child{border-top:0}
+.wk-list h3{font-size:14.5px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.wk-list li li{font-size:13.5px;color:var(--ink2);padding:2px 0 2px 16px;position:relative;overflow-wrap:anywhere}
+.wk-list li li::before{content:"✓";position:absolute;left:0;color:var(--good);font-weight:700}
+.wk-list li li.lg::before{content:"－";color:var(--muted)}
+.rv-form{display:flex;flex-direction:column;gap:16px}
+.rv-form label>span,.rv-form legend{display:block;font-weight:800;font-size:14.5px;margin-bottom:6px}
+.rv-form legend small,.rv-form label>span small{font-weight:400;color:var(--muted);font-size:12.5px;margin-left:6px}
+.top3{display:flex;flex-direction:column;gap:8px}
+.top3 label{display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;align-items:center}
+.top3 label b{font-size:15px;color:var(--muted);text-align:center}
+.energy{display:flex;gap:6px;flex-wrap:wrap}
+.energy label{position:relative}
+.energy input{position:absolute;opacity:0;inset:0;margin:0}
+.energy span{display:grid;place-items:center;min-width:52px;height:40px;padding:0 10px;border-radius:10px;border:1px solid var(--line);font-weight:700;font-size:14px;cursor:pointer}
+.energy input:checked+span{background:var(--btn);border-color:var(--btn);color:var(--btn-ink)}
+.energy input:focus-visible+span{outline:2.5px solid var(--focus);outline-offset:2px}
+.rv-acts{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rv-state{font-size:12.5px;color:var(--muted);margin-left:auto}
+.history{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px;padding-bottom:56px}
+.rv-item{display:block;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;text-decoration:none}
+.rv-item:hover{border-color:var(--edge)}
+.rv-item b{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.rv-item b span{color:var(--muted);font-weight:500;letter-spacing:2px}
+.rv-item p{font-size:13px;color:var(--ink2);margin-top:6px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ---------- 資料 ---------- */
+.data-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start;padding-bottom:56px}
+.data-grid p{font-size:14px;color:var(--ink2);line-height:1.75}
+.counts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
+.counts div{background:var(--sunken);border-radius:12px;padding:10px 12px}
+.counts b{display:block;font-size:22px;font-weight:800;line-height:1.2}
+.counts span{font-size:12px;color:var(--muted)}
+.row-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.steps{counter-reset:s;margin:12px 0;display:flex;flex-direction:column;gap:8px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:26px minmax(0,1fr);gap:8px;font-size:14px;line-height:1.65}
+.steps li::before{content:counter(s);width:24px;height:24px;border-radius:50%;background:var(--sunken);display:grid;place-items:center;font-size:12.5px;font-weight:800}
+.steps a{color:var(--focus);font-weight:600}
+.sync-form{display:flex;gap:8px;flex-wrap:wrap}
+.sync-form .in{flex:1 1 220px;width:auto}
+.fine{font-size:12.5px!important;color:var(--muted)!important;margin-top:12px}
+.err{color:var(--danger)}
+.theme-pick{display:flex;gap:6px;flex-wrap:wrap}
+.theme-pick label{position:relative}
+.theme-pick input{position:absolute;opacity:0;inset:0;margin:0}
+.theme-pick span{display:grid;place-items:center;height:38px;padding:0 14px;border-radius:10px;border:1px solid var(--line);font-weight:600;font-size:14px;cursor:pointer}
+.theme-pick input:checked+span{background:var(--btn);border-color:var(--btn);color:var(--btn-ink)}
+.theme-pick input:focus-visible+span{outline:2.5px solid var(--focus);outline-offset:2px}
+.danger-zone{border-color:color-mix(in srgb,var(--danger) 30%,var(--line))}
+.prof{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 16px;font-size:14px;margin-top:4px}
+.prof dt{color:var(--muted)}
+.prof dd{font-weight:600}
+
+/* ---------- 歡迎頁 ---------- */
+.welcome{max-width:760px;margin:0 auto;padding:clamp(40px,8vw,96px) 0 72px}
+.welcome h1{font-size:clamp(36px,6vw,64px);line-height:1.2;margin:10px 0 18px}
+.welcome .lead{font-size:17px;color:var(--ink2);line-height:1.85;max-width:34em}
+.w-opts{display:grid;gap:12px;margin-top:32px}
+.w-opt{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;padding:16px 20px;border-radius:16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none}
+.w-opt:hover{border-color:var(--edge);box-shadow:var(--shadow)}
+.w-opt b{font-size:16.5px}
+.w-opt span{font-size:13.5px;color:var(--muted)}
+.w-opt.primary{background:var(--btn);border-color:var(--btn);color:var(--btn-ink)}
+.w-opt.primary span{color:inherit;opacity:.75}
+.w-note{display:flex;align-items:center;gap:8px;margin-top:22px;font-size:13.5px;color:var(--muted)}
+
+/* ---------- 對話框 ---------- */
+dialog{border:0;padding:0;border-radius:20px;width:min(580px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 48px);background:var(--surface);color:var(--ink);box-shadow:0 30px 80px -20px rgba(0,0,0,.45);overflow:hidden}
+dialog[open]{display:flex;flex-direction:column;animation:pop .18s ease-out}
+dialog::backdrop{background:rgba(15,17,20,.45)}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
+.m-form{display:flex;flex-direction:column;flex:1;min-height:0}
+.m-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px 12px 22px;border-bottom:1px solid var(--line2)}
+.m-h h2{font-size:18px;font-weight:800;line-height:1.4}
+.m-b{padding:18px 22px;overflow-y:auto;min-height:0;flex:1}
+.m-f{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 22px 16px;border-top:1px solid var(--line2)}
+.m-f .spacer{flex:1}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.field{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--ink2)}
+.field.full,.check-field.full,.form-ctx{grid-column:1/-1}
+.field>span small{font-weight:400;color:var(--muted);margin-left:6px}
+.check-field{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:500;color:var(--ink2);cursor:pointer}
+.check-field input{width:18px;height:18px;accent-color:var(--btn);flex:none}
+.form-ctx{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--sunken);border-radius:12px;padding:10px 12px;font-size:14px}
+.swatches{display:flex;flex-wrap:wrap;gap:8px}
+.swatches legend{font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:6px;width:100%}
+.sw{position:relative}
+.sw input{position:absolute;opacity:0;inset:0;margin:0}
+.sw span{display:block;width:34px;height:34px;border-radius:50%;background:var(--ac);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--line);cursor:pointer}
+.sw input:checked+span{box-shadow:0 0 0 2.5px var(--ink)}
+.sw input:focus-visible+span{outline:2.5px solid var(--focus);outline-offset:3px}
+.confirm-msg{font-size:15px;line-height:1.75;color:var(--ink2)}
+.qa{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.qa-b{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--raise);color:var(--ink)}
+.qa-b:hover{border-color:var(--edge)}
+.qa-b b{font-size:15.5px;margin-top:4px}
+.qa-b span{font-size:12.5px;color:var(--muted)}
+.choice{display:grid;gap:10px;margin-top:14px}
+
+/* ---------- 提示 ---------- */
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:120;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;width:max-content;max-width:calc(100vw - 32px)}
+.toast{pointer-events:auto;display:flex;align-items:center;gap:12px;background:var(--btn);color:var(--btn-ink);border-radius:12px;padding:10px 12px 10px 16px;font-size:14px;box-shadow:0 14px 34px -10px rgba(0,0,0,.4);animation:pop .18s ease-out;max-width:100%}
+.toast span{overflow-wrap:anywhere}
+.toast button{border:0;border-radius:8px;height:30px;padding:0 12px;font-weight:700;font-size:13px;background:color-mix(in srgb,var(--btn-ink) 16%,transparent);color:inherit;flex:none}
+
+/* ---------- 寬度 ---------- */
+@media (max-width:1080px){
+  .tabs a{padding:8px 11px}
+}
+@media (max-width:980px){
+  .cols,.p-grid,.rv-grid,.plan-top,.data-grid{grid-template-columns:minmax(0,1fr)}
+  .today-head{grid-template-columns:minmax(0,1fr);gap:18px}
+  .board{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:760px){
+  .wrap{padding:0 16px}
+  .top-in{padding:0 16px;height:58px}
+  .tabs{display:none}
+  .brand small{display:none}
+  .bottom{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:40;background:color-mix(in srgb,var(--surface) 94%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+  .bottom a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;font-size:11.5px;font-weight:600;color:var(--faint);text-decoration:none}
+  .bottom a[aria-current=page]{color:var(--ink)}
+  main{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
+  #toast{bottom:calc(86px + env(safe-area-inset-bottom))}
+  .card{padding:16px 16px;border-radius:16px}
+  .today-head{padding:22px 0 18px}
+  .page-head{padding:22px 0 16px}
+  .board{grid-template-columns:minmax(0,1fr)}
+  .chips{flex-wrap:nowrap;overflow-x:auto;margin:0 -16px;padding:0 16px 4px;scrollbar-width:none;width:calc(100% + 32px)}
+  .chips::-webkit-scrollbar{display:none}
+  .toolbar{flex-direction:column;align-items:stretch}
+  .quick .grow{flex-basis:100%}
+  .quick select.in,.quick input[type=date]{flex:1 1 140px}
+  .mini .mt{display:none}
+  .mini{padding:0 8px}
+  .counts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .form{grid-template-columns:minmax(0,1fr)}
+  .qa{grid-template-columns:minmax(0,1fr)}
+  .in{font-size:16px}
+  dialog{width:100%;margin:auto 0 0;border-radius:20px 20px 0 0;max-height:92dvh}
+  .m-f{padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+  .tl li{grid-template-columns:42px minmax(0,1fr);gap:10px}
+  .week-nav{width:100%;justify-content:space-between}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#view">跳到主要內容</a>
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#today"><span class="mark hand" aria-hidden="true">羊</span><span><b class="hand" id="brand-name">人生計劃</b><small>把每條線都接成下一步</small></span></a>
+    <nav class="tabs" aria-label="主選單">
+      <a href="#today" data-nav="today">今天</a><a href="#projects" data-nav="projects">專案</a><a href="#plan" data-nav="plan">藍圖</a><a href="#review" data-nav="review">回顧</a><a href="#data" data-nav="data">資料</a>
+    </nav>
+    <span class="sync-dot" id="sync-dot" hidden></span>
+    <button type="button" class="btn primary add-top" data-act="quick-add" aria-label="新增"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>新增</span></button>
+  </div>
+</header>
+<main id="view" class="wrap" tabindex="-1"></main>
+<nav class="bottom" aria-label="主選單" id="bottom-nav"></nav>
+<dialog id="modal" aria-label="編輯"></dialog>
+<input type="file" id="file-in" accept=".json,application/json" hidden>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+const KEY = 'yy-lifeplan-v1', META = 'yy-lifeplan-meta', PRE = 'yy-lifeplan-before-import', SYNC = 'yy-lifeplan-sync', THEME = 'yy-lifeplan-theme';
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+
+/* ---------- 小工具 ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const tr = v => String(v ?? '').trim();
+const uid = p => `${p}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+const nowISO = () => new Date().toISOString();
+const safeUrl = u => { u = tr(u); return /^https?:\/\/\S+$/i.test(u) ? u : ''; };
+const nl2br = s => esc(s).replace(/\n/g, '<br>');
+const pad = n => String(n).padStart(2, '0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const today = () => iso(new Date());
+const parseD = s => { const [y, m, d] = String(s).split('-').map(Number); return new Date(y, (m || 1) - 1, d || 1); };
+const addDays = (s, n) => { const d = parseD(s); d.setDate(d.getDate() + n); return iso(d); };
+const diff = (a, b) => Math.round((parseD(a) - parseD(b)) / 864e5);
+const isDate = s => /^\d{4}-\d{2}-\d{2}$/.test(s || '');
+const WD = '日一二三四五六';
+const md = s => isDate(s) ? `${+s.slice(5, 7)}/${+s.slice(8, 10)}` : '';
+const mdw = s => isDate(s) ? `${md(s)}（${WD[parseD(s).getDay()]}）` : '';
+function fmtTime(s) { const d = new Date(s); if (isNaN(d)) return '不明時間'; return `${d.getMonth() + 1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+function stamp() { const d = new Date(); return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`; }
+function isoWeek(s) {
+  const d = parseD(s), day = (d.getDay() + 6) % 7;
+  d.setDate(d.getDate() - day + 3);
+  const y = d.getFullYear(), j4 = new Date(y, 0, 4);
+  const thu1 = new Date(y, 0, 4 - ((j4.getDay() + 6) % 7) + 3);
+  const w = 1 + Math.round((d - thu1) / 6048e5);
+  return { y, w, key: `${y}-W${pad(w)}` };
+}
+function weekMonday(key) {
+  const [y, w] = key.split('-W').map(Number), j4 = new Date(y, 0, 4);
+  return iso(new Date(y, 0, 4 - ((j4.getDay() + 6) % 7) + (w - 1) * 7));
+}
+function ago(s) {
+  if (!isDate(s)) return '';
+  const n = diff(today(), s);
+  return n <= 0 ? '今天' : n === 1 ? '昨天' : n < 14 ? `${n} 天前` : n < 60 ? `${Math.floor(n / 7)} 週前` : `${Math.floor(n / 30)} 個月前`;
+}
+function hostLabel(u) {
+  try {
+    const h = new URL(u).hostname.replace(/^www\./, '');
+    const map = { 'app.heptabase.com': 'Heptabase', 'drive.google.com': 'Google 雲端硬碟', 'docs.google.com': 'Google 文件', 'sites.google.com': 'Google 協作平台', 'calendar.google.com': 'Google 日曆', 'claude.ai': 'Claude', 'chatgpt.com': 'ChatGPT', 'github.com': 'GitHub', 'canva.com': 'Canva', 'notion.so': 'Notion' };
+    return map[h] || h;
+  } catch (e) { return '連結'; }
+}
+
+/* ---------- 圖示 ---------- */
+const ic = (d, s = 18) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const I = {
+  check: ic('<path d="M5 12.5l4.5 4.5L19 7.5"/>', 16),
+  plus: ic('<path d="M12 5v14M5 12h14"/>', 16),
+  sun: ic('<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6L6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/>', 15),
+  out: ic('<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4M16 3v4M9 14h6"/>', 15),
+  dots: ic('<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/>'),
+  back: ic('<path d="M15 18l-6-6 6-6"/>', 18),
+  fwd: ic('<path d="M9 18l6-6-6-6"/>', 18),
+  arrow: ic('<path d="M5 12h14M13 6l6 6-6 6"/>', 15),
+  link: ic('<path d="M10 14a4.5 4.5 0 006.4 0l3-3a4.5 4.5 0 00-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 00-6.4 0l-3 3a4.5 4.5 0 006.4 6.4l1-1"/>', 15),
+  edit: ic('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>', 15),
+  flag: ic('<path d="M6 21V4h10l-1.6 4L16 12H6"/>', 13),
+  alert: ic('<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17.2v.1"/>', 15),
+  note: ic('<path d="M6 4h12v16H6z"/><path d="M9 9h6M9 13h6M9 17h3"/>', 13),
+  lock: ic('<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 018 0v2.5"/>', 16),
+  x: ic('<path d="M6 6l12 12M18 6L6 18"/>'),
+  repeat: ic('<path d="M17 2.5l3 3-3 3"/><path d="M4 11.5v-1a5 5 0 015-5h11"/><path d="M7 21.5l-3-3 3-3"/><path d="M20 12.5v1a5 5 0 01-5 5H4"/>', 13),
+  today: ic('<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>', 21),
+  projects: ic('<rect x="3.5" y="4" width="7" height="16" rx="2"/><rect x="13.5" y="4" width="7" height="10" rx="2"/>', 21),
+  plan: ic('<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".6"/>', 21),
+  review: ic('<path d="M4 12a8 8 0 108-8 8.5 8.5 0 00-6 2.5L4 8.5"/><path d="M4 3.5v5h5"/><path d="M12 8v4.5l3 2"/>', 21),
+  data: ic('<ellipse cx="12" cy="6" rx="7.5" ry="3"/><path d="M4.5 6v6c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3V6"/><path d="M4.5 12v6c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v-6"/>', 21)
+};
+
+/* ---------- 資料定義 ---------- */
+const STATUS = { doing: '進行中', idea: '想法', pause: '暫停', done: '完成' };
+const ST_ORDER = ['doing', 'idea', 'pause', 'done'];
+const HORIZON = { year: '今年', three: '三年內', life: '這一生' };
+const GSTATUS = { active: '進行中', done: '達成了', drop: '先放下' };
+const VIS = { private: '私人', company: '給公司', public: '可公開' };
+const REPEAT = { '': '不重複', daily: '每天', weekly: '每週', monthly: '每月' };
+const COLORS = { blue: '藍', orange: '橘', green: '綠', purple: '紫', red: '紅', ochre: '黃', slate: '灰藍', rose: '玫瑰', teal: '青' };
+const acv = a => `var(--c-${a && COLORS[a.color] ? a.color : 'slate'})`;
+
+function fresh() {
+  const t = today(), now = nowISO();
+  const sunday = addDays(t, (7 - parseD(t).getDay()) % 7);
+  const task = (id, title, extra) => ({ id, projectId: 'p-start', title, due: '', plan: '', repeat: '', done: false, doneAt: '', note: '', created: now, ...extra });
+  return {
+    profile: { name: '羊羊', vision: '', birthYear: '', lifespan: 80 },
+    areas: [
+      { id: 'a-teach', name: '教學', color: 'blue', vision: '' },
+      { id: 'a-work', name: '工作與事業', color: 'orange', vision: '' },
+      { id: 'a-study', name: '學業與師培', color: 'purple', vision: '' },
+      { id: 'a-stage', name: '表演與作品', color: 'red', vision: '' },
+      { id: 'a-health', name: '身心健康', color: 'green', vision: '' },
+      { id: 'a-life', name: '財務與生活', color: 'ochre', vision: '' },
+      { id: 'a-grow', name: '關係與成長', color: 'teal', vision: '' }
+    ],
+    goals: [],
+    projects: [{
+      id: 'p-start', name: '把人生藍圖整理起來', areaId: 'a-grow', goalId: '', status: 'doing',
+      summary: '第一次使用：把人生領域、目標和正在做的專案放進來。',
+      why: '事情分散在很多地方，想要打開一個頁面就知道下一步。',
+      doneDef: '每個領域都寫了三年後的樣子，正在做的專案都有下一步。',
+      next: '到「藍圖」頁，替每個領域寫一句三年後的樣子。', blocker: '',
+      start: t, due: addDays(t, 7), links: [], archived: false, created: now, updated: t
+    }],
+    tasks: [
+      task('t-s1', '替每個領域寫一句三年後的樣子', { plan: t }),
+      task('t-s2', '把正在進行的專案加進來，各寫一個下一步', { plan: t }),
+      task('t-s3', '做第一次週回顧', { due: sunday }),
+      task('t-s4', '到「資料」頁下載第一份備份')
+    ],
+    logs: [], outputs: [], reviews: {}, updatedAt: ''
+  };
+}
+
+function normalize(s) {
+  s = s && typeof s === 'object' ? s : {};
+  const f = fresh();
+  const list = k => Array.isArray(s[k]) ? s[k].filter(x => x && typeof x === 'object' && x.id) : [];
+  const str = v => typeof v === 'string' ? v : (v == null ? '' : String(v));
+  return {
+    profile: { ...f.profile, ...(s.profile && typeof s.profile === 'object' ? s.profile : {}) },
+    areas: (Array.isArray(s.areas) ? list('areas') : f.areas).map(a => ({ ...a, name: str(a.name) || '未命名領域', color: COLORS[a.color] ? a.color : 'slate', vision: str(a.vision) })),
+    goals: list('goals').map(g => ({ areaId: '', title: '', horizon: 'year', measure: '', why: '', status: 'active', created: '', ...g, horizon: HORIZON[g.horizon] ? g.horizon : 'year', status: GSTATUS[g.status] ? g.status : 'active' })),
+    projects: list('projects').map(p => ({ name: '', areaId: '', goalId: '', summary: '', why: '', doneDef: '', next: '', blocker: '', start: '', due: '', archived: false, created: '', updated: '', ...p, status: STATUS[p.status] ? p.status : 'doing', links: Array.isArray(p.links) ? p.links.filter(l => l && safeUrl(l.url)) : [] })),
+    tasks: list('tasks').map(t => ({ projectId: '', title: '', due: '', plan: '', note: '', doneAt: '', created: '', ...t, done: !!t.done, repeat: REPEAT[t.repeat] !== undefined ? (t.repeat || '') : '' })),
+    logs: list('logs').map(l => ({ projectId: '', date: today(), did: '', next: '', link: '', created: '', ...l })),
+    outputs: list('outputs').map(o => ({ projectId: '', title: '', version: '', url: '', date: '', created: '', ...o, visibility: VIS[o.visibility] ? o.visibility : 'private' })),
+    reviews: s.reviews && typeof s.reviews === 'object' && !Array.isArray(s.reviews) ? s.reviews : {},
+    updatedAt: str(s.updatedAt)
+  };
+}
+function meaningful(s) {
+  return !!s && (s.projects.some(p => p.id !== 'p-start') || s.logs.length > 0 || s.goals.length > 0 || Object.keys(s.reviews).length > 0 || s.tasks.some(t => !/^t-s\d$/.test(t.id)));
+}
+
+/* ---------- 狀態與儲存 ---------- */
+let S = null, rev = 0;
+const meta = { dirty: false, lastBackup: '', since: '' };
+const ui = { area: 'all', showDone: false, open: new Set(), closed: new Set() };
+
+function load() {
+  try { Object.assign(meta, JSON.parse(store.get(META) || '{}')); } catch (e) {}
+  const raw = store.get(KEY);
+  if (!raw) return;
+  try { const o = JSON.parse(raw); if (o && o.state) S = normalize(o.state); }
+  catch (e) { store.set(`${KEY}-broken-${stamp()}`, raw); console.warn('資料讀不懂，已另存一份', e); }
+  if (S && !isDate(meta.since)) { meta.since = today(); saveMeta(); }
+}
+function saveMeta() { store.set(META, JSON.stringify(meta)); }
+function persist({ dirty = true, keepTime = false } = {}) {
+  if (!S) return;
+  if (!keepTime || !S.updatedAt) S.updatedAt = nowISO();
+  if (!store.set(KEY, JSON.stringify({ app: 'yy-lifeplan', schemaVersion: 1, savedAt: S.updatedAt, state: S }))) toast('這台裝置的瀏覽器存不進資料，請先到「資料」頁下載備份。');
+  if (dirty) { meta.dirty = true; rev++; scheduleSync(); }
+  if (!isDate(meta.since)) meta.since = today();
+  saveMeta();
+}
+function commit(msg, opt) { persist(); render(); if (msg) toast(msg, opt); }
+function withUndo(msg, mutate) {
+  const snap = JSON.stringify(S);
+  mutate();
+  commit(msg, { undo: () => { S = normalize(JSON.parse(snap)); commit('已復原'); } });
+}
+
+const byId = (arr, id) => id ? arr.find(x => x.id === id) : undefined;
+const area = id => byId(S.areas, id), proj = id => byId(S.projects, id), goal = id => byId(S.goals, id), task = id => byId(S.tasks, id);
+function prog(p) {
+  const ts = S.tasks.filter(t => t.projectId === p.id), d = ts.filter(t => t.done).length;
+  return { done: d, total: ts.length, pct: p.status === 'done' ? 100 : ts.length ? Math.round(d / ts.length * 100) : 0 };
+}
+const byLog = (a, b) => (b.date || '').localeCompare(a.date || '') || (b.created || '').localeCompare(a.created || '');
+const lastLog = pid => S.logs.filter(l => l.projectId === pid).sort(byLog)[0];
+function dueTxt(due) {
+  if (!isDate(due)) return '';
+  const n = diff(due, today());
+  if (n < 0) return `<span class="due late">逾期 ${-n} 天</span>`;
+  if (n === 0) return `<span class="due soon">今天到期</span>`;
+  if (n === 1) return `<span class="due soon">明天到期</span>`;
+  return `<span class="due">${n <= 7 ? mdw(due) : md(due)} 到期</span>`;
+}
+const areaTag = a => `<span class="area-tag" style="--ac:${acv(a)}"><i></i>${esc(a ? a.name : '未分類')}</span>`;
+function nextDue(due, rep) {
+  const base = isDate(due) ? due : today();
+  if (rep === 'daily') return addDays(base, 1);
+  if (rep === 'weekly') return addDays(base, 7);
+  if (rep === 'monthly') {
+    const d = parseD(base), day = d.getDate();
+    d.setDate(1); d.setMonth(d.getMonth() + 1);
+    d.setDate(Math.min(day, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()));
+    return iso(d);
+  }
+  return '';
+}
+function parseLinks(text) {
+  return String(text || '').split('\n').map(line => {
+    const m = line.match(/https?:\/\/\S+/i);
+    if (!m) return null;
+    const url = m[0], label = tr(line.replace(url, '').replace(/[｜|：:\-–—]+\s*$/, ''));
+    return { text: label || hostLabel(url), url };
+  }).filter(Boolean);
+}
+const linksToText = links => (links || []).map(l => `${l.text} ${l.url}`).join('\n');
+
+/* ---------- 共用片段 ---------- */
+function projOpts(sel, placeholder = '不屬於專案') {
+  const ps = S.projects.filter(p => (!p.archived && p.status !== 'done') || p.id === sel);
+  const opt = p => `<option value="${esc(p.id)}"${p.id === sel ? ' selected' : ''}>${esc(p.name)}</option>`;
+  let h = `<option value="">${esc(placeholder)}</option>`;
+  for (const a of S.areas) { const l = ps.filter(p => p.areaId === a.id); if (l.length) h += `<optgroup label="${esc(a.name)}">${l.map(opt).join('')}</optgroup>`; }
+  const orphan = ps.filter(p => !area(p.areaId));
+  if (orphan.length) h += `<optgroup label="未分類">${orphan.map(opt).join('')}</optgroup>`;
+  return h;
+}
+function taskRow(x, mode = '') {
+  const t = today(), p = proj(x.projectId), a = p && area(p.areaId), m = [];
+  if (p && mode !== 'project') m.push(`<a class="chip-p" href="#p/${esc(p.id)}" style="--ac:${acv(a)}"><i></i>${esc(p.name)}</a>`);
+  if (!x.done && dueTxt(x.due)) m.push(dueTxt(x.due));
+  if (!x.done && mode === 'focus' && isDate(x.plan) && x.plan < t) m.push(`<span>${md(x.plan)} 排的，還沒做</span>`);
+  if (x.repeat) m.push(`<span>${I.repeat}${REPEAT[x.repeat]}</span>`);
+  if (x.done && x.doneAt) m.push(`<span>${md(x.doneAt.slice(0, 10))} 完成</span>`);
+  if (x.note) m.push(`<span title="${esc(x.note)}">${I.note}有備註</span>`);
+  const id = esc(x.id);
+  let btn = '';
+  if (!x.done) {
+    const overdue = isDate(x.due) && x.due <= t;
+    const tt = esc(x.title);
+    if (mode === 'focus' && isDate(x.plan) && x.plan <= t && !overdue) btn = `<button type="button" class="mini" data-act="unplan" data-id="${id}" title="移出今天" aria-label="移出今天：${tt}">${I.out}<span class="mt" aria-hidden="true">移出今天</span></button>`;
+    else if (mode === 'pool') btn = `<button type="button" class="mini" data-act="plan" data-id="${id}" title="排到今天" aria-label="排到今天：${tt}">${I.sun}<span class="mt" aria-hidden="true">排今天</span></button>`;
+    else if (mode === 'project') btn = x.plan === t
+      ? `<button type="button" class="mini on" data-act="unplan" data-id="${id}" title="已排在今天，按一下移出" aria-label="已排在今天，移出：${tt}">${I.sun}<span class="mt" aria-hidden="true">今天</span></button>`
+      : `<button type="button" class="mini" data-act="plan" data-id="${id}" title="排到今天" aria-label="排到今天：${tt}">${I.sun}<span class="mt" aria-hidden="true">排今天</span></button>`;
+  }
+  return `<li class="task${x.done ? ' done' : ''}">
+    <button type="button" class="check" data-act="toggle" data-id="${id}" aria-label="${x.done ? '改回未完成' : '完成'}：${esc(x.title)}">${I.check}</button>
+    <div class="t-main"><span class="t-title">${esc(x.title)}</span>${m.length ? `<span class="t-meta">${m.join('')}</span>` : ''}</div>
+    <div class="t-acts">${btn}<button type="button" class="icon-btn" data-act="edit-task" data-id="${id}" aria-label="編輯：${esc(x.title)}">${I.dots}</button></div>
+  </li>`;
+}
+const isOpen = (k, def) => ui.open.has(k) ? ' open' : ui.closed.has(k) ? '' : def ? ' open' : '';
+function linkBtns(links, max = 3) {
+  return (links || []).slice(0, max).map(l => `<a class="lk" href="${esc(l.url)}" target="_blank" rel="noopener">${I.link}<span>${esc(l.text)}</span></a>`).join('');
+}
+
+/* ---------- 今天 ---------- */
+function vToday() {
+  const t = today(), now = new Date(), wk = isoWeek(t), y = now.getFullYear();
+  const hr = now.getHours(), hi = hr < 5 ? '夜深了' : hr < 11 ? '早安' : hr < 18 ? '午安' : '晚安';
+  const open = S.tasks.filter(x => !x.done);
+  const inFocus = x => (isDate(x.plan) && x.plan <= t) || (isDate(x.due) && x.due <= t);
+  const byDue = (a, b) => (a.due || '9999').localeCompare(b.due || '9999') || (a.plan || '').localeCompare(b.plan || '') || (a.created || '').localeCompare(b.created || '');
+  const focus = open.filter(inFocus).sort(byDue);
+  const pool = open.filter(x => !inFocus(x)).sort(byDue);
+  const doneToday = S.tasks.filter(x => x.done && (x.doneAt || '').slice(0, 10) === t);
+  const active = S.projects.filter(p => !p.archived && p.status === 'doing').sort((a, b) => (b.updated || '').localeCompare(a.updated || ''));
+  const nW = isoWeek(`${y}-12-28`).w, curW = wk.y === y ? wk.w : wk.y < y ? 0 : nW + 1;
+  const pct = Math.floor((now - new Date(y, 0, 1)) / (new Date(y + 1, 0, 1) - new Date(y, 0, 1)) * 100);
+  let weeks = '';
+  for (let i = 1; i <= nW; i++) weeks += `<i class="${i < curW ? 'past' : i === curW ? 'now' : ''}"></i>`;
+  const name = S.profile.name ? `，${esc(S.profile.name)}` : '';
+  const msg = focus.length === 0 && doneToday.length ? `今天排的 ${doneToday.length} 件都做完了，好好休息。`
+    : focus.length === 0 ? '今天還沒排事情。從待辦挑一件，或直接加一件。'
+    : focus.length > 3 ? `今天排了 ${focus.length} 件，先挑最重要的三件做。`
+    : '一次推進一件就好。';
+
+  const soon = [];
+  S.tasks.forEach(x => { if (!x.done && isDate(x.due) && x.due > t && x.due <= addDays(t, 14)) soon.push({ d: x.due, title: x.title, sub: proj(x.projectId)?.name || '待辦', act: `data-act="edit-task" data-id="${esc(x.id)}"` }); });
+  S.projects.forEach(p => { if (!p.archived && p.status !== 'done' && isDate(p.due) && p.due > t && p.due <= addDays(t, 30)) soon.push({ d: p.due, title: `${p.name}｜目標完成日`, sub: area(p.areaId)?.name || '專案', href: `#p/${p.id}` }); });
+  soon.sort((a, b) => a.d.localeCompare(b.d));
+
+  const yg = S.goals.filter(g => g.horizon === 'year' && g.status === 'active');
+  const rv = S.reviews[wk.key];
+  const mon = weekMonday(wk.key);
+  const wDone = S.tasks.filter(x => x.done && (x.doneAt || '').slice(0, 10) >= mon).length;
+  const wLogs = S.logs.filter(l => l.date >= mon && l.date <= t).length;
+
+  return `${banners()}
+  <section class="today-head">
+    <div>
+      <p class="eyebrow">${y} 年第 ${wk.w} 週・星期${WD[now.getDay()]}</p>
+      <h1 class="hand">${now.getMonth() + 1} 月 ${now.getDate()} 日</h1>
+      <p class="sub">${hi}${name}。${msg}</p>
+    </div>
+    <div class="year" aria-label="${y} 年已經過了 ${pct}%">
+      <div class="year-top"><span>${y} 年</span><b class="num">${pct}%</b></div>
+      <div class="weeks" style="grid-template-columns:repeat(${Math.ceil(nW / 2)},minmax(0,1fr))" aria-hidden="true">${weeks}</div>
+      <small>一格一週。今年還剩 ${diff(`${y}-12-31`, t)} 天。</small>
+    </div>
+  </section>
+  <div class="cols">
+    <div class="stack">
+      <section class="card focus-card" aria-labelledby="h-focus">
+        <div class="card-h"><h2 id="h-focus">今天要推進的事</h2><span class="aside num">${doneToday.length} 件完成・${focus.length} 件待做</span></div>
+        ${focus.length ? `<ul class="tasks">${focus.map(x => taskRow(x, 'focus')).join('')}</ul>` : `<p class="empty-line">還沒有排今天的事。</p>`}
+        <form class="quick" data-form="quick-task">
+          <label class="sr-only" for="qt-title">新增今天的待辦</label>
+          <input class="in grow" id="qt-title" name="title" placeholder="加一件今天要做的事" autocomplete="off" required>
+          <select class="in" name="projectId" id="qt-proj" aria-label="屬於哪個專案">${projOpts('')}</select>
+          <button class="btn primary">加入今天</button>
+        </form>
+        ${pool.length ? `<details data-key="pool"${isOpen('pool', focus.length === 0)}><summary>從待辦清單挑（${pool.length}）</summary><ul class="tasks">${pool.slice(0, 15).map(x => taskRow(x, 'pool')).join('')}</ul>${pool.length > 15 ? `<p class="more-note">還有 ${pool.length - 15} 件，在各個專案頁裡。</p>` : ''}</details>` : ''}
+        ${doneToday.length ? `<details data-key="done-today"${isOpen('done-today', false)}><summary>今天完成的（${doneToday.length}）</summary><ul class="tasks">${doneToday.map(x => taskRow(x)).join('')}</ul></details>` : ''}
+      </section>
+      <section class="card" aria-labelledby="h-resume">
+        <div class="card-h"><h2 id="h-resume">接續開工</h2><a class="link" href="#projects">全部專案 →</a></div>
+        ${active.length ? `<div class="resume">${active.slice(0, 6).map(resumeCard).join('')}</div>${active.length > 6 ? `<p class="more-note" style="padding-left:0">還有 ${active.length - 6} 個進行中的專案。</p>` : ''}`
+          : `<p class="empty-line">沒有進行中的專案。把正在做的事加進來，寫好下一步，下次打開就能直接接著做。</p><div class="row-btns"><button type="button" class="btn" data-act="new-project">${I.plus}新增專案</button></div>`}
+      </section>
+    </div>
+    <aside class="stack" aria-label="這週與接下來">
+      ${rv && rv.done ? `<section class="card rv-ok">${I.check}<span>這週已經回顧過了。<a class="link" href="#review">看回顧</a></span></section>`
+        : `<section class="card rv-cta"><h2>這週的回顧</h2><p>${md(mon)} 起已完成 ${wDone} 件待辦、記了 ${wLogs} 筆進度。花十分鐘看一下這週，決定下週最重要的三件事。</p><a class="btn sm" href="#review">開始回顧</a></section>`}
+      <section class="card" aria-labelledby="h-soon">
+        <div class="card-h"><h2 id="h-soon">接下來兩週</h2></div>
+        ${soon.length ? `<ul class="soon">${soon.slice(0, 8).map(s => { const d = parseD(s.d); return `<li><span class="dbadge"><b class="num">${d.getDate()}</b><small>${d.getMonth() + 1} 月</small></span><div>${s.href ? `<a class="s-t" href="${esc(s.href)}">${esc(s.title)}</a>` : `<button type="button" class="s-t" ${s.act}>${esc(s.title)}</button>`}<small class="s-m">${esc(s.sub)}・星期${WD[d.getDay()]}・${diff(s.d, t)} 天後</small></div></li>`; }).join('')}</ul>`
+          : '<p class="empty-line">兩週內沒有到期的事。替待辦加上到期日，就會出現在這裡。</p>'}
+      </section>
+      <section class="card" aria-labelledby="h-yg">
+        <div class="card-h"><h2 id="h-yg">今年的目標</h2><a class="link" href="#plan">藍圖 →</a></div>
+        ${yg.length ? `<ul class="yg">${yg.map(g => { const a = area(g.areaId), ps = S.projects.filter(p => p.goalId === g.id && !p.archived), gp = ps.length ? Math.round(ps.reduce((s, p) => s + prog(p).pct, 0) / ps.length) : 0; return `<li style="--ac:${acv(a)}"><div class="yg-t"><i class="dot"></i>${esc(g.title)}</div><div class="yg-m">${ps.length ? `<span class="prog"><i style="width:${gp}%"></i></span>${ps.length} 個專案・${gp}%` : '還沒有專案在推進'}</div></li>`; }).join('')}</ul>`
+          : `<p class="empty-line">還沒有今年的目標。到藍圖頁，替重要的領域各訂一個。</p>`}
+      </section>
+      <section class="card" aria-labelledby="h-pulse">
+        <div class="card-h"><h2 id="h-pulse">人生領域動態</h2></div>
+        <ul class="pulse">${areaPulse()}</ul>
+      </section>
+    </aside>
+  </div>`;
+}
+function resumeCard(p) {
+  const a = area(p.areaId), last = lastLog(p.id), g = prog(p);
+  return `<article class="rc" style="--ac:${acv(a)}">
+    <div class="rc-top">${areaTag(a)}${dueTxt(p.due)}</div>
+    <h3><a href="#p/${esc(p.id)}">${esc(p.name)}</a></h3>
+    <dl>
+      <div><dt>上次做到</dt><dd>${last ? `${esc(last.did)}<time>${md(last.date)}</time>` : '<span class="muted">還沒有紀錄</span>'}</dd></div>
+      <div class="nx"><dt>下一步</dt><dd>${p.next ? esc(p.next) : '<span class="muted">還沒寫下一步</span>'}</dd></div>
+      ${p.blocker ? `<div class="bk"><dt>卡住</dt><dd>${esc(p.blocker)}</dd></div>` : ''}
+    </dl>
+    ${g.total ? `<div class="rc-prog"><span class="prog"><i style="width:${g.pct}%"></i></span><span class="num">${g.done}/${g.total}</span></div>` : ''}
+    <div class="rc-acts">${linkBtns(p.links, 2)}<button type="button" class="btn sm" data-act="log" data-id="${esc(p.id)}">記一筆進度</button></div>
+  </article>`;
+}
+function areaPulse() {
+  return S.areas.map(a => {
+    const ps = S.projects.filter(p => p.areaId === a.id && !p.archived), ids = new Set(ps.map(p => p.id));
+    let last = '';
+    S.logs.forEach(l => { if (ids.has(l.projectId) && l.date > last) last = l.date; });
+    S.tasks.forEach(x => { if (x.done && ids.has(x.projectId)) { const d = (x.doneAt || '').slice(0, 10); if (d > last) last = d; } });
+    const doing = ps.filter(p => p.status === 'doing').length;
+    const stale = doing && (!last || diff(today(), last) > 14);
+    return `<li style="--ac:${acv(a)}"><i class="dot"></i><span class="ap-name">${esc(a.name)}</span><span class="ap-meta${stale ? ' stale' : ''}">${doing ? `${doing} 個進行中・` : ''}${last ? `${ago(last)}推進` : '還沒有動靜'}</span></li>`;
+  }).join('') || '<li class="empty-line">還沒有人生領域。到藍圖頁新增。</li>';
+}
+function banners() {
+  const out = [];
+  if (sync.error && syncOn()) out.push(`<div class="banner err">${I.alert}<span>同步沒有成功：${esc(sync.error)}</span><a class="btn sm" href="#data">看同步設定</a></div>`);
+  if (!syncOn() && meaningful(S)) {
+    const days = meta.lastBackup ? diff(today(), meta.lastBackup.slice(0, 10)) : null;
+    const used = isDate(meta.since) ? diff(today(), meta.since) : 0;
+    if ((days === null && used >= 3) || days >= 14) out.push(`<div class="banner">${I.lock}<span>${days === null ? '資料只存在這台裝置的瀏覽器裡，還沒下載過備份。' : `上次下載備份是 ${days} 天前。`}換手機或清除瀏覽器資料前，記得先備份。</span><button type="button" class="btn sm" data-act="download">下載備份</button></div>`);
+  }
+  return out.join('');
+}
+
+/* ---------- 專案列表 ---------- */
+function vProjects() {
+  const all = S.projects.filter(p => !p.archived);
+  const list = all.filter(p => ui.area === 'all' || p.areaId === ui.area);
+  const archived = S.projects.filter(p => p.archived);
+  const nDone = list.filter(p => p.status === 'done').length;
+  const cols = ST_ORDER.filter(s => s !== 'done' || ui.showDone).map(s => {
+    const items = list.filter(p => p.status === s).sort((a, b) => s === 'done' ? (b.updated || '').localeCompare(a.updated || '') : (a.due || '9999').localeCompare(b.due || '9999') || (b.updated || '').localeCompare(a.updated || ''));
+    return `<section class="col" aria-label="${STATUS[s]}"><header><i class="st st-${s}"></i>${STATUS[s]}<b class="num">${items.length}</b></header>${items.map(pCard).join('') || `<p class="col-empty">${s === 'doing' ? '沒有進行中的專案' : '沒有'}</p>`}</section>`;
+  });
+  const chip = (v, label, n, a) => `<button type="button" class="chip" data-act="pf-area" data-v="${esc(v)}" aria-pressed="${ui.area === v}">${a ? `<i class="dot" style="--ac:${acv(a)}"></i>` : ''}${esc(label)} <b class="num">${n}</b></button>`;
+  return `<div class="page-head"><div><h1 class="hand">專案</h1><p>每個專案都寫好下一步，打開就能接著做。</p></div><button type="button" class="btn primary" data-act="new-project">${I.plus}新增專案</button></div>
+  <div class="toolbar">
+    <div class="chips" role="group" aria-label="依人生領域篩選">${chip('all', '全部', all.length)}${S.areas.map(a => chip(a.id, a.name, all.filter(p => p.areaId === a.id).length, a)).join('')}</div>
+    <label class="toggle"><input type="checkbox" data-change="pf-done"${ui.showDone ? ' checked' : ''}> 顯示已完成（${nDone}）</label>
+  </div>
+  ${all.length ? `<div class="board" style="--n:${cols.length}">${cols.join('')}</div>`
+    : `<div class="card"><p class="empty-line">還沒有專案。專案是「需要好幾步才能完成的事」：一份教案、一場演出、一門課的期末報告都算。</p><div class="row-btns"><button type="button" class="btn primary" data-act="new-project">${I.plus}新增第一個專案</button><button type="button" class="btn" data-act="import">匯入工作站資料</button></div></div>`}
+  ${archived.length ? `<details data-key="archived"${isOpen('archived', false)} style="padding-bottom:48px"><summary>已封存（${archived.length}）</summary><ul class="arch">${archived.map(p => `<li>${areaTag(area(p.areaId))}<a href="#p/${esc(p.id)}">${esc(p.name)}</a><button type="button" class="btn sm" data-act="unarchive" data-id="${esc(p.id)}">取消封存</button></li>`).join('')}</ul></details>` : ''}`;
+}
+function pCard(p) {
+  const a = area(p.areaId), g = prog(p), live = p.status !== 'done';
+  return `<a class="p-card" href="#p/${esc(p.id)}" style="--ac:${acv(a)}">
+    ${areaTag(a)}
+    <h3>${esc(p.name)}</h3>
+    ${live && p.next ? `<p class="p-next"><span>下一步</span>${esc(p.next)}</p>` : ''}
+    ${live && p.blocker ? `<p class="p-block">${I.alert}<span>${esc(p.blocker)}</span></p>` : ''}
+    <div class="p-foot">${g.total ? `<span class="prog"><i style="width:${g.pct}%"></i></span><span class="num">${g.done}/${g.total}</span>` : '<span>還沒有待辦</span>'}${live ? dueTxt(p.due) : ''}</div>
+  </a>`;
+}
+
+/* ---------- 專案頁 ---------- */
+function vProject(id) {
+  const p = proj(id);
+  if (!p) return `<a class="back" href="#projects">${I.back}全部專案</a><div class="card" style="margin-top:12px"><p class="empty-line">找不到這個專案，可能已經刪掉了。</p></div>`;
+  const a = area(p.areaId), g = goal(p.goalId), pg = prog(p), last = lastLog(p.id), pid = esc(p.id);
+  const ts = S.tasks.filter(x => x.projectId === p.id);
+  const openT = ts.filter(x => !x.done).sort((x, y) => (x.due || '9999').localeCompare(y.due || '9999') || (x.created || '').localeCompare(y.created || ''));
+  const doneT = ts.filter(x => x.done).sort((x, y) => (y.doneAt || '').localeCompare(x.doneAt || ''));
+  const logs = S.logs.filter(l => l.projectId === p.id).sort(byLog);
+  const outs = S.outputs.filter(o => o.projectId === p.id).sort((x, y) => (y.date || '').localeCompare(x.date || ''));
+  const facts = [];
+  if (p.start) facts.push(`<span>開始 <b class="num">${md(p.start)}</b></span>`);
+  if (p.due) { const n = diff(p.due, today()); facts.push(`<span>目標 <b class="num">${md(p.due)}</b>${p.status !== 'done' ? `（${n < 0 ? `已過 ${-n} 天` : n === 0 ? '就是今天' : `還有 ${n} 天`}）` : ''}</span>`); }
+  if (pg.total) facts.push(`<span>待辦 <b class="num">${pg.done}/${pg.total}</b></span>`);
+  if (p.updated) facts.push(`<span>最近推進 <b>${ago(p.updated)}</b></span>`);
+  return `<a class="back" href="#projects">${I.back}全部專案</a>
+  <header class="p-head" style="--ac:${acv(a)}">
+    <div class="p-tags">${areaTag(a)}${g ? `<a class="goal-tag" href="#plan">${I.flag}${esc(g.title)}</a>` : ''}${p.archived ? '<span class="vis">已封存</span>' : ''}</div>
+    <h1 class="hand">${esc(p.name)}</h1>
+    ${p.summary ? `<p class="lead">${nl2br(p.summary)}</p>` : ''}
+    <div class="facts">
+      <label><span class="sr-only">狀態</span><select class="status-sel" data-change="p-status" data-id="${pid}">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}"${p.status === k ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
+      ${facts.join('')}
+      <button type="button" class="btn sm" data-act="edit-project" data-id="${pid}">${I.edit}編輯專案</button>
+    </div>
+  </header>
+  <div class="p-grid" style="--ac:${acv(a)}">
+    <div class="stack">
+      <section class="next-box" aria-label="下一步">
+        <div class="nb-h"><span>${I.arrow}下一步</span><button type="button" class="nb-edit" data-act="edit-next" data-id="${pid}">${p.next ? '修改' : '寫下一步'}</button></div>
+        ${p.next ? `<p>${esc(p.next)}</p>` : `<p class="empty">還沒寫下一步。只要寫「下次打開時，第一個動作是什麼」。</p>`}
+        ${last ? `<small>上次做到（${md(last.date)}）：${esc(last.did)}</small>` : ''}
+      </section>
+      ${p.blocker ? `<div class="block-box">${I.alert}<div><b>卡住的地方</b>${esc(p.blocker)}</div></div>` : ''}
+      <section class="card" aria-labelledby="h-tasks">
+        <div class="card-h"><h2 id="h-tasks">待辦</h2><span class="aside num">${pg.done}/${pg.total}</span></div>
+        ${pg.total ? `<div class="prog lg" aria-hidden="true"><i style="width:${pg.pct}%"></i></div>` : ''}
+        ${openT.length ? `<ul class="tasks">${openT.map(x => taskRow(x, 'project')).join('')}</ul>` : `<p class="empty-line">${pg.total ? '待辦都完成了。' : '把這個專案拆成幾件做得完的小事。'}</p>`}
+        <form class="quick" data-form="add-task" data-id="${pid}">
+          <label class="sr-only" for="pt-title">新增待辦</label>
+          <input class="in grow" id="pt-title" name="title" placeholder="新增一件待辦" autocomplete="off" required>
+          <input class="in" type="date" name="due" id="pt-due" aria-label="到期日（可不填）">
+          <button class="btn">加入</button>
+        </form>
+        ${doneT.length ? `<details data-key="done-${pid}"${isOpen('done-' + p.id, false)}><summary>已完成（${doneT.length}）</summary><ul class="tasks">${doneT.map(x => taskRow(x, 'project')).join('')}</ul></details>` : ''}
+      </section>
+      <section class="card" aria-labelledby="h-logs">
+        <div class="card-h"><h2 id="h-logs">推進紀錄</h2><button type="button" class="btn sm" data-act="log" data-id="${pid}">${I.plus}記一筆</button></div>
+        ${logs.length ? `<ol class="tl">${logs.map(l => `<li><time>${md(l.date)}</time><div class="tl-b"><p>${nl2br(l.did)}</p><button type="button" class="icon-btn" data-act="edit-log" data-id="${esc(l.id)}" aria-label="編輯 ${md(l.date)} 的紀錄">${I.dots}</button>${l.next ? `<p class="tl-next">下次：${esc(l.next)}</p>` : ''}${safeUrl(l.link) ? `<a class="lk" href="${esc(l.link)}" target="_blank" rel="noopener">${I.link}<span>${esc(hostLabel(l.link))}</span></a>` : ''}</div></li>`).join('')}</ol>`
+          : '<p class="empty-line">每做完一段，記下「做了什麼、下次從哪裡接」。下次打開就不用重新想。</p>'}
+      </section>
+    </div>
+    <aside class="stack">
+      <section class="card" aria-labelledby="h-links">
+        <div class="card-h"><h2 id="h-links">常用連結</h2><button type="button" class="btn sm ghost" data-act="edit-project" data-id="${pid}">${I.edit}編輯</button></div>
+        ${p.links.length ? `<ul class="links">${p.links.map(l => `<li><a class="link-row" href="${esc(l.url)}" target="_blank" rel="noopener">${I.link}<span>${esc(l.text)}</span><small>${esc(hostLabel(l.url))}</small></a></li>`).join('')}</ul>`
+          : '<p class="empty-line">把 Heptabase 卡片、雲端硬碟資料夾、教材網址放在這裡，開工時一鍵打開。</p>'}
+      </section>
+      <section class="card" aria-labelledby="h-outs">
+        <div class="card-h"><h2 id="h-outs">成果</h2><button type="button" class="btn sm" data-act="new-output" data-id="${pid}">${I.plus}新增</button></div>
+        ${outs.length ? `<ul class="outs">${outs.map(o => `<li><span class="o-t">${safeUrl(o.url) ? `<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.title)}</a>` : esc(o.title)}</span><button type="button" class="icon-btn" data-act="edit-output" data-id="${esc(o.id)}" aria-label="編輯成果：${esc(o.title)}">${I.dots}</button><span class="o-m">${o.version ? `<span>${esc(o.version)}</span>` : ''}${o.date ? `<span class="num">${md(o.date)}</span>` : ''}<span class="vis ${o.visibility}">${VIS[o.visibility]}</span></span></li>`).join('')}</ul>`
+          : '<p class="empty-line">做出來的東西（教案版本、網站、影片、報告）記在這裡，之後要回報或放作品集時好找。</p>'}
+      </section>
+      ${p.why || p.doneDef ? `<section class="card"><dl class="about">${p.why ? `<dt>為什麼做</dt><dd>${nl2br(p.why)}</dd>` : ''}${p.doneDef ? `<dt>怎樣算完成</dt><dd>${nl2br(p.doneDef)}</dd>` : ''}</dl></section>` : ''}
+      <div class="manage">
+        ${p.archived ? `<button type="button" class="btn sm" data-act="unarchive" data-id="${pid}">取消封存</button>` : `<button type="button" class="btn sm" data-act="archive" data-id="${pid}">封存專案</button>`}
+        <button type="button" class="btn sm ghost danger" data-act="del-project" data-id="${pid}">刪除專案</button>
+      </div>
+    </aside>
+  </div>`;
+}
+
+/* ---------- 藍圖 ---------- */
+function vPlan() {
+  const pr = S.profile;
+  const orphanGoals = S.goals.filter(g => !area(g.areaId));
+  return `<div class="page-head"><div><h1 class="hand">人生藍圖</h1><p>每個領域想成為什麼樣子、今年要達成什麼，再交給專案一步步推進。</p></div><button type="button" class="btn primary" data-act="new-goal">${I.plus}新增目標</button></div>
+  <div class="plan-top">
+    <section class="card" aria-labelledby="h-vision">
+      <div class="card-h"><h2 id="h-vision">我想成為的人</h2><button type="button" class="btn sm ghost" data-act="edit-vision">${I.edit}${pr.vision ? '編輯' : '寫下來'}</button></div>
+      ${pr.vision ? `<p class="vision-text hand">${nl2br(pr.vision)}</p>` : '<p class="empty-line">用幾句話寫下十年後想成為什麼樣的人。想不清楚也沒關係，先寫一個版本，之後再改。</p>'}
+    </section>
+    <section class="card" aria-labelledby="h-life">${lifeGrid()}</section>
+  </div>
+  <div class="areas">
+    ${S.areas.map(areaCard).join('')}
+    ${orphanGoals.length ? `<article class="card area-card" style="--ac:var(--c-slate)"><div class="ac-h"><i class="dot"></i><h2>未分類的目標</h2></div><ul>${orphanGoals.map(goalItem).join('')}</ul></article>` : ''}
+    <button type="button" class="area-add" data-act="new-area">${I.plus}新增人生領域</button>
+  </div>`;
+}
+function lifeGrid() {
+  const by = parseInt(S.profile.birthYear, 10), life = Math.min(Math.max(parseInt(S.profile.lifespan, 10) || 80, 30), 120);
+  const now = new Date(), y = now.getFullYear();
+  if (!by || by < 1900 || by > y) return `<div class="card-h"><h2 id="h-life">人生進度</h2></div><p class="empty-line">填上出生年份，這裡會用一格一年畫出你的人生進度，提醒自己時間怎麼用。</p><div class="row-btns"><button type="button" class="btn sm" data-act="edit-profile">填出生年份</button></div>`;
+  const age = y - by, yp = (now - new Date(y, 0, 1)) / (new Date(y + 1, 0, 1) - new Date(y, 0, 1));
+  let cells = '';
+  for (let r = 0; r < Math.ceil(life / 10); r++) {
+    cells += `<span>${r * 10}</span>`;
+    for (let c = 0; c < 10; c++) {
+      const n = r * 10 + c;
+      if (n >= life) { cells += '<i class="void"></i>'; continue; }
+      cells += n < age ? `<i class="past" title="${by + n} 年"></i>` : n === age ? `<i class="now" style="--p:${Math.round(yp * 100)}%" title="${by + n} 年（今年）"></i>` : `<i title="${by + n} 年"></i>`;
+    }
+  }
+  const lived = Math.max(0, Math.floor((now - new Date(by, 6, 1)) / 6048e5)), leftW = Math.max(0, life * 52 - lived);
+  return `<div class="card-h"><h2 id="h-life">人生進度</h2><span class="aside">一格一年・以 ${life} 歲計</span></div>
+    <div class="life" aria-hidden="true">${cells}</div>
+    <p class="life-note">今年滿 ${age} 歲。大約走過了 ${lived.toLocaleString()} 週，還有大約 ${leftW.toLocaleString()} 週可以安排。</p>`;
+}
+function areaCard(a) {
+  const goals = S.goals.filter(g => g.areaId === a.id);
+  const doing = S.projects.filter(p => p.areaId === a.id && !p.archived && p.status === 'doing');
+  const aid = esc(a.id);
+  return `<article class="card area-card" style="--ac:${acv(a)}">
+    <div class="ac-h"><i class="dot"></i><h2>${esc(a.name)}</h2><button type="button" class="icon-btn" data-act="edit-area" data-id="${aid}" aria-label="編輯領域：${esc(a.name)}">${I.edit}</button></div>
+    ${a.vision ? `<p class="ac-vision"><span>三年後的樣子</span>${nl2br(a.vision)}</p>` : `<button type="button" class="ac-vision" data-act="edit-area" data-id="${aid}">寫下這個領域三年後的樣子…</button>`}
+    ${Object.keys(HORIZON).map(h => { const gs = goals.filter(g => g.horizon === h); return gs.length ? `<div class="ac-goals"><h3>${HORIZON[h]}</h3><ul>${gs.map(goalItem).join('')}</ul></div>` : ''; }).join('')}
+    <div class="ac-f"><span>${doing.length ? `進行中：${doing.map(p => `<a href="#p/${esc(p.id)}">${esc(p.name)}</a>`).join('、')}` : '沒有進行中的專案'}</span><button type="button" class="btn sm" data-act="new-goal" data-area="${aid}">${I.plus}目標</button></div>
+  </article>`;
+}
+function goalItem(g) {
+  const ps = S.projects.filter(p => p.goalId === g.id && !p.archived);
+  const gp = ps.length ? Math.round(ps.reduce((s, p) => s + prog(p).pct, 0) / ps.length) : 0;
+  return `<li class="goal ${g.status}"><button type="button" data-act="edit-goal" data-id="${esc(g.id)}">
+    <span class="g-ic">${g.status === 'done' ? I.check : I.flag}</span>
+    <span><span class="g-title">${esc(g.title)}</span>${g.measure ? `<span class="g-measure">${esc(g.measure)}</span>` : ''}${ps.length ? `<span class="g-meta"><span class="prog"><i style="width:${gp}%"></i></span>${ps.length} 個專案・${gp}%</span>` : ''}</span>
+  </button></li>`;
+}
+
+/* ---------- 回顧 ---------- */
+function weekData(mon, sun) {
+  const inW = d => d && d >= mon && d <= sun;
+  const doneT = S.tasks.filter(x => x.done && inW((x.doneAt || '').slice(0, 10)));
+  const logs = S.logs.filter(l => inW(l.date));
+  const ids = [...new Set([...doneT.map(x => x.projectId), ...logs.map(l => l.projectId)].filter(id => proj(id)))];
+  const groups = ids.map(id => ({ p: proj(id), tasks: doneT.filter(x => x.projectId === id), logs: logs.filter(l => l.projectId === id).sort((a, b) => a.date.localeCompare(b.date)) }));
+  return { doneT, logs, groups, loose: doneT.filter(x => !proj(x.projectId)) };
+}
+function vReview(arg) {
+  const t = today(), cur = isoWeek(t).key;
+  const wk = /^\d{4}-W\d{2}$/.test(arg || '') && arg <= cur ? arg : cur;
+  const mon = weekMonday(wk), sun = addDays(mon, 6);
+  const prev = isoWeek(addDays(mon, -7)).key, next = isoWeek(addDays(mon, 7)).key;
+  const r = S.reviews[wk] || {}, top = r.top || [];
+  const { doneT, logs, groups, loose } = weekData(mon, sun);
+  const past = Object.keys(S.reviews).filter(k => k !== wk && S.reviews[k] && (S.reviews[k].wins || S.reviews[k].stuck || (S.reviews[k].top || []).some(Boolean))).sort().reverse();
+  return `<div class="page-head"><div><h1 class="hand">週回顧</h1><p>看看這週推進了什麼、卡在哪裡，然後決定下週最重要的三件事。</p></div>
+    <div class="week-nav"><a class="icon-btn" href="#review/${prev}" aria-label="上一週">${I.back}</a><b class="num">${wk === cur ? '這週・' : ''}${md(mon)} – ${md(sun)}</b><a class="icon-btn" href="#review/${next}" aria-label="下一週"${wk >= cur ? ' aria-disabled="true" tabindex="-1"' : ''}>${I.fwd}</a></div></div>
+  <div class="rv-grid">
+    <section class="card" aria-labelledby="h-wk">
+      <div class="card-h"><h2 id="h-wk">這週的紀錄</h2><button type="button" class="btn sm" data-act="review-copy" data-week="${wk}">複製摘要</button></div>
+      <div class="stats"><div><b class="num">${doneT.length}</b><span>完成待辦</span></div><div><b class="num">${logs.length}</b><span>推進紀錄</span></div><div><b class="num">${groups.length}</b><span>推進的專案</span></div></div>
+      ${groups.length || loose.length ? `<ul class="wk-list">${groups.map(g => `<li style="--ac:${acv(area(g.p.areaId))}"><h3><i class="dot"></i><a href="#p/${esc(g.p.id)}" style="text-decoration:none">${esc(g.p.name)}</a></h3><ul>${g.tasks.map(x => `<li>${esc(x.title)}</li>`).join('')}${g.logs.map(l => `<li class="lg">${esc(l.did)}</li>`).join('')}</ul></li>`).join('')}${loose.length ? `<li><h3>其他待辦</h3><ul>${loose.map(x => `<li>${esc(x.title)}</li>`).join('')}</ul></li>` : ''}</ul>`
+        : '<p class="empty-line">這週還沒有完成的待辦或推進紀錄。</p>'}
+    </section>
+    <form class="card rv-form" data-form="review" data-week="${wk}" aria-labelledby="h-rvf">
+      <div class="card-h" style="margin-bottom:0"><h2 id="h-rvf">回顧</h2>${r.done ? `<span class="aside">${I.check}已完成</span>` : ''}</div>
+      <label><span>這週做得好的事</span><textarea class="in" id="rv-wins" name="wins" rows="3" placeholder="有推進的、讓自己滿意的">${esc(r.wins)}</textarea></label>
+      <label><span>卡住或沒做到的</span><textarea class="in" id="rv-stuck" name="stuck" rows="3" placeholder="為什麼卡住？缺時間、缺資料、還是在等別人？">${esc(r.stuck)}</textarea></label>
+      <label><span>下週想調整的做法</span><textarea class="in" id="rv-adjust" name="adjust" rows="2">${esc(r.adjust)}</textarea></label>
+      <fieldset><legend>下週最重要的三件事</legend><div class="top3">${[0, 1, 2].map(i => `<label><b>${i + 1}</b><input class="in" id="rv-top${i + 1}" name="top${i + 1}" value="${esc(top[i])}" autocomplete="off"></label>`).join('')}</div></fieldset>
+      <fieldset><legend>這週的能量<small>1 很累 – 5 很有精神</small></legend><div class="energy">${[1, 2, 3, 4, 5].map(n => `<label><input type="radio" name="energy" value="${n}"${+r.energy === n ? ' checked' : ''}><span>${n}</span></label>`).join('')}</div></fieldset>
+      <div class="rv-acts">
+        <button class="btn primary">${r.done ? '更新回顧' : '完成這週的回顧'}</button>
+        <button type="button" class="btn" data-act="review-top3" data-week="${wk}"${r.topAdded ? ' disabled' : ''}>${r.topAdded ? '三件事已加進待辦' : '把三件事加進待辦'}</button>
+        <span class="rv-state">${r.updated ? `已自動儲存 ${fmtTime(r.updated)}` : '寫的內容會自動儲存'}</span>
+      </div>
+    </form>
+  </div>
+  ${past.length ? `<h2 class="hand" style="font-size:24px;margin:8px 0 14px">過去的回顧</h2><div class="history">${past.map(k => { const x = S.reviews[k], m = weekMonday(k), e = +x.energy || 0; return `<a class="rv-item" href="#review/${k}"><b><span style="letter-spacing:0;color:var(--ink);font-weight:700">${md(m)} – ${md(addDays(m, 6))}</span>${e ? `<span aria-label="能量 ${e}">${'●'.repeat(e)}${'○'.repeat(5 - e)}</span>` : ''}</b><p>${esc((x.top || []).filter(Boolean).join('・') || x.wins || '')}</p></a>`; }).join('')}</div>` : '<div style="height:40px"></div>'}`;
+}
+function weekSummary(wk) {
+  const mon = weekMonday(wk), sun = addDays(mon, 6), r = S.reviews[wk] || {};
+  const { groups, loose } = weekData(mon, sun);
+  const L = [`【${md(mon)}–${md(sun)} 週回顧】`];
+  if (groups.length || loose.length) {
+    L.push('', '這週推進：');
+    for (const g of groups) {
+      L.push(`・${g.p.name}`);
+      g.tasks.forEach(x => L.push(`　✓ ${x.title}`));
+      g.logs.forEach(l => L.push(`　－ ${l.did.replace(/\n/g, ' ')}${l.next ? `（下次：${l.next}）` : ''}`));
+    }
+    loose.forEach(x => L.push(`・✓ ${x.title}`));
+  }
+  if (r.wins) L.push('', '做得好的：', r.wins);
+  if (r.stuck) L.push('', '卡住的：', r.stuck);
+  if (r.adjust) L.push('', '要調整的：', r.adjust);
+  const top = (r.top || []).filter(Boolean);
+  if (top.length) L.push('', '下週最重要的三件事：', ...top.map((x, i) => `${i + 1}. ${x}`));
+  return L.join('\n');
+}
+function readReview(f) {
+  const d = new FormData(f);
+  return { wins: tr(d.get('wins')), stuck: tr(d.get('stuck')), adjust: tr(d.get('adjust')), top: [tr(d.get('top1')), tr(d.get('top2')), tr(d.get('top3'))], energy: +d.get('energy') || 0 };
+}
+let rvTimer = 0, rvForm = null;
+function saveReview(f, done) {
+  clearTimeout(rvTimer); rvForm = null;
+  const wk = f.dataset.week;
+  S.reviews[wk] = { ...(S.reviews[wk] || {}), ...readReview(f), updated: nowISO(), ...(done ? { done: true } : {}) };
+  persist();
+  const st = f.querySelector('.rv-state');
+  if (st) st.textContent = `已自動儲存 ${fmtTime(S.reviews[wk].updated)}`;
+}
+function flushReview() { if (rvForm && document.body.contains(rvForm)) saveReview(rvForm, false); }
+
+/* ---------- 資料與設定 ---------- */
+function vData() {
+  const pr = S.profile, th = store.get(THEME) || 'auto', hasPre = !!store.get(PRE);
+  return `<div class="page-head"><div><h1 class="hand">資料與設定</h1><p>資料存在哪裡、怎麼備份、怎麼讓手機和電腦看到同一份。</p></div></div>
+  <div class="data-grid">
+    <section class="card" aria-labelledby="h-store">
+      <div class="card-h"><h2 id="h-store">資料存在這台裝置</h2>${I.lock}</div>
+      <p>專案、待辦和回顧只存在這個瀏覽器裡，<b>不會放上 GitHub</b>。別人打開這個網址，只會看到一個空的工作站。</p>
+      <div class="counts">
+        <div><b class="num">${S.projects.length}</b><span>專案</span></div>
+        <div><b class="num">${S.tasks.filter(x => !x.done).length}</b><span>未完成待辦</span></div>
+        <div><b class="num">${S.logs.length}</b><span>推進紀錄</span></div>
+        <div><b class="num">${Object.keys(S.reviews).length}</b><span>週回顧</span></div>
+      </div>
+      <p class="fine">最後修改 ${S.updatedAt ? fmtTime(S.updatedAt) : '—'}・上次下載備份 ${meta.lastBackup ? fmtTime(meta.lastBackup) : '還沒有'}</p>
+      <div class="row-btns">
+        <button type="button" class="btn primary" data-act="download">下載備份</button>
+        <button type="button" class="btn" data-act="import">匯入檔案</button>
+        ${hasPre ? '<button type="button" class="btn ghost" data-act="undo-import">復原到上次匯入前</button>' : ''}
+      </div>
+      <p class="fine">「匯入檔案」可以選這個網站的備份檔（會取代目前資料，可復原），或「羊羊工作站 v2.0」下載的資料檔（會把專案、待辦、進度紀錄合併進來，放在「國王才藝」領域）。</p>
+    </section>
+    ${syncCard()}
+    <section class="card" aria-labelledby="h-prof">
+      <div class="card-h"><h2 id="h-prof">個人設定</h2><button type="button" class="btn sm ghost" data-act="edit-profile">${I.edit}編輯</button></div>
+      <dl class="prof"><dt>稱呼</dt><dd>${esc(pr.name || '—')}</dd><dt>出生年份</dt><dd>${esc(pr.birthYear || '未填')}</dd><dt>人生進度以</dt><dd>${esc(pr.lifespan || 80)} 歲計</dd></dl>
+      <h3 style="font-size:14px;font-weight:800;margin:18px 0 8px">外觀</h3>
+      <div class="theme-pick" role="radiogroup" aria-label="外觀">${[['auto', '跟著系統'], ['light', '淺色'], ['dark', '深色']].map(([v, l]) => `<label><input type="radio" name="theme" value="${v}" data-change="theme"${th === v ? ' checked' : ''}><span>${l}</span></label>`).join('')}</div>
+    </section>
+    <section class="card danger-zone" aria-labelledby="h-wipe">
+      <div class="card-h"><h2 id="h-wipe">清除這台裝置的資料</h2></div>
+      <p>會先自動下載一份備份，再把這台裝置上的人生計劃資料全部清掉。${syncOn() ? '雲端那份同步資料不會被刪除。' : ''}</p>
+      <div class="row-btns"><button type="button" class="btn danger" data-act="wipe">清除資料</button></div>
+    </section>
+  </div>`;
+}
+function syncCard() {
+  if (!syncOn()) return `<section class="card" id="sync" aria-labelledby="h-sync">
+    <div class="card-h"><h2 id="h-sync">手機和電腦同步</h2><span class="aside">選用</span></div>
+    <p>想在手機和電腦看到同一份資料，可以把資料存到你 GitHub 帳號裡的一份<b>秘密 Gist</b>。不設定也能用，只是每台裝置各存各的。</p>
+    <ol class="steps">
+      <li><span>打開 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub 建立金鑰的頁面</a>，名稱填「人生計劃同步」，到期日自己選。</span></li>
+      <li><span>在權限（Permissions）裡找到 <b>Gists</b>，設成 <b>Read and write</b>，其他都不用開，按 Generate token。找不到的話，改用 classic token，只勾 <b>gist</b>。</span></li>
+      <li><span>複製產生的金鑰，貼到下面按「連線」。另一台裝置也貼同一把，就會讀到同一份資料。</span></li>
+    </ol>
+    <form class="sync-form" data-form="sync">
+      <label class="sr-only" for="gh-token">GitHub 金鑰</label>
+      <input class="in" id="gh-token" name="token" type="password" autocomplete="off" spellcheck="false" placeholder="貼上金鑰（github_pat_… 或 ghp_…）" required>
+      <button class="btn primary">連線</button>
+    </form>
+    <p class="fine">金鑰只存在這台裝置。秘密 Gist 不會出現在公開列表，但拿到 Gist 網址的人看得到內容，所以不要把那個網址給別人。${sync.error ? `<br><b class="err">上次失敗：${esc(sync.error)}</b>` : ''}</p>
+  </section>`;
+  return `<section class="card" id="sync" aria-labelledby="h-sync">
+    <div class="card-h"><h2 id="h-sync">手機和電腦同步</h2><span class="aside">已連線</span></div>
+    <p>每次修改後幾秒會自動上傳；打開網站或切回這個分頁時，會先讀雲端有沒有新的版本。</p>
+    <p id="sync-status" style="margin-top:10px;font-weight:600"></p>
+    <div class="row-btns">
+      <button type="button" class="btn primary" data-act="sync-now">立即同步</button>
+      <a class="btn" href="https://gist.github.com/${esc(sync.gistId)}" target="_blank" rel="noopener">在 GitHub 查看</a>
+      <button type="button" class="btn ghost danger" data-act="sync-off">中斷同步</button>
+    </div>
+    <p class="fine">中斷後，這台裝置的資料和雲端那份 Gist 都會留著。</p>
+  </section>`;
+}
+
+/* ---------- 歡迎頁 ---------- */
+function vWelcome() {
+  return `<section class="welcome">
+    <p class="eyebrow">羊羊的專案推進板</p>
+    <h1 class="hand">把人生的每條線，<br>都接成下一步。</h1>
+    <p class="lead">打開就知道今天要推進什麼、每個專案上次做到哪、下一步是什麼。每週回頭看一次，確認自己正往想要的方向走。</p>
+    <div class="w-opts">
+      <button type="button" class="w-opt primary" data-act="start-fresh"><b>開始使用</b><span>先建好七個人生領域和一份新手專案，之後都可以改。</span></button>
+      <button type="button" class="w-opt" data-act="import"><b>匯入檔案</b><span>這個網站的備份檔，或「羊羊工作站 v2.0」下載的資料檔。</span></button>
+      <a class="w-opt" href="#data" data-act="start-sync"><b>從另一台裝置接過來</b><span>已經在別台設定過同步，貼上 GitHub 金鑰就能讀到同一份。</span></a>
+    </div>
+    <p class="w-note">${I.lock}資料只存在你的瀏覽器裡，不會上傳到 GitHub。</p>
+  </section>`;
+}
+
+/* ---------- 畫面切換 ---------- */
+const VIEWS = { today: vToday, projects: vProjects, p: vProject, plan: vPlan, review: vReview, data: vData };
+const NAV = [['today', '今天', I.today], ['projects', '專案', I.projects], ['plan', '藍圖', I.plan], ['review', '回顧', I.review], ['data', '資料', I.data]];
+$('#bottom-nav').innerHTML = NAV.map(([k, l, i]) => `<a href="#${k}" data-nav="${k}">${i}<span>${l}</span></a>`).join('');
+function route() {
+  const h = decodeURIComponent(location.hash.slice(1)) || 'today';
+  const i = h.indexOf('/'), view = i < 0 ? h : h.slice(0, i), arg = i < 0 ? '' : h.slice(i + 1);
+  return VIEWS[view] ? { view, arg } : { view: 'today', arg: '' };
+}
+let lastHash = null, lastDay = today();
+function render() {
+  const view = $('#view');
+  const ae = document.activeElement;
+  let keep = null;
+  if (ae && ae.id && view.contains(ae) && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) keep = { id: ae.id, v: ae.value, s: ae.selectionStart, e: ae.selectionEnd };
+  document.body.classList.toggle('no-data', !S);
+  lastDay = today();
+  if (!S) {
+    view.innerHTML = vWelcome();
+    document.title = '人生計劃';
+    $('#brand-name').textContent = '人生計劃';
+    lastHash = location.hash;
+    return;
+  }
+  const r = route();
+  view.innerHTML = VIEWS[r.view](r.arg);
+  const navKey = r.view === 'p' ? 'projects' : r.view;
+  document.querySelectorAll('[data-nav]').forEach(a => { if (a.dataset.nav === navKey) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  const titles = { today: '今天', projects: '專案', plan: '人生藍圖', review: '週回顧', data: '資料與設定' };
+  const pTitle = r.view === 'p' && proj(r.arg) ? proj(r.arg).name : titles[r.view] || '';
+  document.title = `${pTitle}｜${S.profile.name ? S.profile.name + '的' : ''}人生計劃`;
+  $('#brand-name').textContent = `${S.profile.name ? S.profile.name + '的' : ''}人生計劃`;
+  if (location.hash !== lastHash) { if (lastHash !== null) window.scrollTo(0, 0); lastHash = location.hash; }
+  if (keep) { const el = document.getElementById(keep.id); if (el) { el.value = keep.v; el.focus({ preventScroll: true }); try { el.setSelectionRange(keep.s, keep.e); } catch (e) {} } }
+  syncPaint();
+}
+
+/* ---------- 對話框 ---------- */
+const dlg = $('#modal');
+let onSubmit = null, lastFocus = null;
+function openModal({ title, body, submit = '儲存', extra = '', onSave = null, danger = false }) {
+  if (!dlg.open) lastFocus = document.activeElement;
+  dlg.innerHTML = `<form class="m-form" novalidate>
+    <div class="m-h"><h2 id="m-title">${esc(title)}</h2><button type="button" class="icon-btn" data-act="close-modal" aria-label="關閉">${I.x}</button></div>
+    <div class="m-b">${body}</div>
+    <div class="m-f">${extra}<span class="spacer"></span><button type="button" class="btn ghost" data-act="close-modal">${submit ? '取消' : '關閉'}</button>${submit ? `<button class="btn primary${danger ? ' danger' : ''}">${esc(submit)}</button>` : ''}</div>
+  </form>`;
+  dlg.setAttribute('aria-labelledby', 'm-title');
+  onSubmit = onSave;
+  if (!dlg.open) dlg.showModal();
+  const first = dlg.querySelector('[autofocus]') || dlg.querySelector('.m-b input:not([type=hidden]):not([type=radio]),.m-b textarea,.m-b select,.m-b button');
+  if (first) first.focus();
+}
+function closeModal() { if (dlg.open) dlg.close(); }
+dlg.addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target;
+  if (!f.checkValidity()) { f.reportValidity(); return; }
+  const fn = onSubmit, data = Object.fromEntries(new FormData(f));
+  if (fn && fn(data, f) === false) return;
+  if (onSubmit === fn) closeModal();
+});
+dlg.addEventListener('close', () => { if (!dlg.open && lastFocus && document.body.contains(lastFocus)) { try { lastFocus.focus({ preventScroll: true }); } catch (e) {} } });
+const fText = (name, label, val = '', o = {}) => `<label class="field${o.full ? ' full' : ''}"><span>${label}${o.hint ? `<small>${o.hint}</small>` : ''}</span><input class="in" name="${name}" value="${esc(val)}"${o.type ? ` type="${o.type}"` : ''}${o.req ? ' required' : ''}${o.ph ? ` placeholder="${esc(o.ph)}"` : ''}${o.af ? ' autofocus' : ''}${o.attrs || ''} autocomplete="off"></label>`;
+const fArea = (name, label, val = '', o = {}) => `<label class="field full"><span>${label}${o.hint ? `<small>${o.hint}</small>` : ''}</span><textarea class="in" name="${name}" rows="${o.rows || 3}"${o.req ? ' required' : ''}${o.ph ? ` placeholder="${esc(o.ph)}"` : ''}${o.af ? ' autofocus' : ''}>${esc(val)}</textarea></label>`;
+const fSel = (name, label, opts, val, o = {}) => `<label class="field${o.full ? ' full' : ''}"><span>${label}${o.hint ? `<small>${o.hint}</small>` : ''}</span><select class="in" name="${name}"${o.req ? ' required' : ''}>${opts.map(([v, t]) => `<option value="${esc(v)}"${v === val ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></label>`;
+const areaOpts = () => S.areas.length ? S.areas.map(a => [a.id, a.name]) : [['', '未分類']];
+const delBtn = (act, id, label = '刪除') => `<button type="button" class="btn ghost danger" data-act="${act}" data-id="${esc(id)}">${label}</button>`;
+function confirmBox(title, html, ok, fn) { openModal({ title, body: `<p class="confirm-msg">${html}</p>`, submit: ok, danger: true, onSave: () => { fn(); } }); }
+
+function taskForm(x, preset = {}) {
+  const isNew = !x;
+  x = x || { title: '', projectId: preset.projectId || '', due: '', plan: preset.plan || '', repeat: '', note: '' };
+  openModal({
+    title: isNew ? '新增待辦' : '編輯待辦', submit: isNew ? '加入' : '儲存',
+    body: `<div class="form">
+      ${fText('title', '要做什麼', x.title, { req: true, full: true, af: true })}
+      <label class="field full"><span>屬於哪個專案</span><select class="in" name="projectId">${projOpts(x.projectId)}</select></label>
+      ${fText('due', '到期日', x.due, { type: 'date' })}
+      ${fText('plan', '排在哪天做', x.plan, { type: 'date', hint: '排到今天會出現在「今天」' })}
+      ${fSel('repeat', '重複', Object.entries(REPEAT), x.repeat || '', { hint: '完成後自動排下一次', full: true })}
+      ${fArea('note', '備註', x.note, { rows: 2 })}
+    </div>`,
+    extra: isNew ? '' : delBtn('del-task', x.id),
+    onSave: d => {
+      const title = tr(d.title);
+      if (!title) { toast('請寫下要做什麼'); return false; }
+      const rec = isNew ? { id: uid('t'), done: false, doneAt: '', created: nowISO() } : x;
+      Object.assign(rec, { title, projectId: proj(d.projectId) ? d.projectId : '', due: isDate(d.due) ? d.due : '', plan: isDate(d.plan) ? d.plan : '', repeat: REPEAT[d.repeat] !== undefined ? d.repeat : '', note: tr(d.note) });
+      if (rec.repeat && !rec.due) rec.due = rec.plan || today();
+      if (isNew) S.tasks.push(rec);
+      commit(isNew ? '已加入待辦' : '已儲存');
+    }
+  });
+}
+function projectForm(p) {
+  const isNew = !p;
+  p = p || { name: '', areaId: ui.area !== 'all' && area(ui.area) ? ui.area : (S.areas[0] ? S.areas[0].id : ''), goalId: '', status: 'doing', summary: '', why: '', doneDef: '', next: '', blocker: '', start: today(), due: '', links: [] };
+  const gOpts = [['', '不屬於特定目標'], ...S.goals.filter(g => g.status !== 'drop' || g.id === p.goalId).map(g => [g.id, `${area(g.areaId) ? area(g.areaId).name + '｜' : ''}${g.title}`])];
+  openModal({
+    title: isNew ? '新增專案' : '編輯專案', submit: isNew ? '建立專案' : '儲存',
+    body: `<div class="form">
+      ${fText('name', '專案名稱', p.name, { req: true, full: true, af: isNew, ph: '例如：一份新教案、一門課的期末報告' })}
+      ${fSel('areaId', '人生領域', areaOpts(), p.areaId)}
+      ${fSel('status', '狀態', Object.entries(STATUS), p.status)}
+      ${fSel('goalId', '推進哪個目標', gOpts, p.goalId, { full: true })}
+      ${fText('next', '下一步', p.next, { full: true, ph: '下次打開時的第一個動作' })}
+      ${fText('start', '開始日', p.start, { type: 'date' })}
+      ${fText('due', '目標完成日', p.due, { type: 'date' })}
+      ${fArea('summary', '一句話說明', p.summary, { rows: 2 })}
+      ${fArea('why', '為什麼做', p.why, { rows: 2 })}
+      ${fArea('doneDef', '怎樣算完成', p.doneDef, { rows: 2 })}
+      ${fText('blocker', '卡住的地方', p.blocker, { full: true, ph: '等誰回覆、缺什麼資料（沒有就留空）' })}
+      ${fArea('links', '常用連結', linksToText(p.links), { rows: 3, hint: '一行一個：名稱 空格 網址', ph: 'Heptabase 卡片 https://app.heptabase.com/…\n教材資料夾 https://drive.google.com/…' })}
+    </div>`,
+    extra: isNew ? '' : delBtn('del-project', p.id, '刪除專案'),
+    onSave: d => {
+      const name = tr(d.name);
+      if (!name) { toast('請填專案名稱'); return false; }
+      const rec = isNew ? { id: uid('p'), archived: false, created: nowISO(), updated: today() } : p;
+      Object.assign(rec, { name, areaId: area(d.areaId) ? d.areaId : '', goalId: goal(d.goalId) ? d.goalId : '', status: STATUS[d.status] ? d.status : 'doing', next: tr(d.next), start: isDate(d.start) ? d.start : '', due: isDate(d.due) ? d.due : '', summary: tr(d.summary), why: tr(d.why), doneDef: tr(d.doneDef), blocker: tr(d.blocker), links: parseLinks(d.links) });
+      if (isNew) { S.projects.push(rec); persist(); location.hash = '#p/' + rec.id; toast('已建立專案'); }
+      else commit('已儲存');
+    }
+  });
+}
+function nextForm(p) {
+  openModal({
+    title: '下一步', submit: '儲存',
+    body: `<div class="form">
+      <p class="form-ctx">${areaTag(area(p.areaId))}<b>${esc(p.name)}</b></p>
+      ${fText('next', '下次打開時的第一個動作', p.next, { full: true, af: true, ph: '寫得越具體越好，例如：打開第 3 課學習單，補完觀察題' })}
+      ${fText('blocker', '卡住的地方', p.blocker, { full: true, ph: '沒有就留空' })}
+    </div>`,
+    onSave: d => { p.next = tr(d.next); p.blocker = tr(d.blocker); p.updated = today(); commit('已更新下一步'); }
+  });
+}
+function logForm(pid, l) {
+  const isNew = !l;
+  l = l || { projectId: pid || '', date: today(), did: '', next: '', link: '' };
+  const p = proj(l.projectId);
+  const pick = isNew && p ? `<input type="hidden" name="projectId" value="${esc(p.id)}"><p class="form-ctx">${areaTag(area(p.areaId))}<b>${esc(p.name)}</b></p>`
+    : `<label class="field full"><span>哪個專案</span><select class="in" name="projectId" required>${projOpts(l.projectId, '請選一個專案')}</select></label>`;
+  openModal({
+    title: isNew ? '記一筆進度' : '編輯進度紀錄', submit: isNew ? '記下來' : '儲存',
+    body: `<div class="form">
+      ${pick}
+      ${fArea('did', '這次做了什麼', l.did, { rows: 3, req: true, af: true, ph: '例如：完成第 3 課觀察學習單初稿' })}
+      ${fText('next', '下次從哪裡接', l.next, { full: true, ph: '下次打開時的第一個動作' })}
+      ${isNew ? '<label class="check-field full"><input type="checkbox" name="setNext" checked> 同時更新成這個專案的「下一步」</label>' : ''}
+      ${fText('date', '日期', l.date, { type: 'date', req: true })}
+      ${fText('link', '相關檔案連結', l.link, { type: 'url', ph: 'https://…' })}
+    </div>`,
+    extra: isNew ? '' : delBtn('del-log', l.id),
+    onSave: d => {
+      const pp = proj(d.projectId), did = tr(d.did);
+      if (!pp) { toast('請選一個專案'); return false; }
+      if (!did) { toast('請寫下這次做了什麼'); return false; }
+      const rec = isNew ? { id: uid('l'), created: nowISO() } : l;
+      Object.assign(rec, { projectId: pp.id, date: isDate(d.date) ? d.date : today(), did, next: tr(d.next), link: safeUrl(d.link) });
+      if (isNew) S.logs.push(rec);
+      if (isNew && d.setNext && rec.next) pp.next = rec.next;
+      if (!pp.updated || rec.date > pp.updated) pp.updated = rec.date;
+      commit(isNew ? '記下來了' : '已儲存');
+    }
+  });
+}
+function outputForm(pid, o) {
+  const isNew = !o;
+  o = o || { projectId: pid || '', title: '', version: '', url: '', date: today(), visibility: 'private' };
+  openModal({
+    title: isNew ? '新增成果' : '編輯成果', submit: isNew ? '加入' : '儲存',
+    body: `<div class="form">
+      ${fText('title', '成果名稱', o.title, { req: true, full: true, af: true, ph: '例如：第 3 課教案 v2' })}
+      <label class="field full"><span>哪個專案</span><select class="in" name="projectId">${projOpts(o.projectId)}</select></label>
+      ${fText('version', '版本', o.version, { ph: 'v1.0' })}
+      ${fText('date', '日期', o.date, { type: 'date' })}
+      ${fSel('visibility', '可以給誰看', Object.entries(VIS), o.visibility, { full: true })}
+      ${fText('url', '連結', o.url, { type: 'url', full: true, ph: 'https://…（本機檔案可以留空）' })}
+    </div>`,
+    extra: isNew ? '' : delBtn('del-output', o.id),
+    onSave: d => {
+      const title = tr(d.title);
+      if (!title) return false;
+      const rec = isNew ? { id: uid('o'), created: nowISO() } : o;
+      Object.assign(rec, { title, projectId: proj(d.projectId) ? d.projectId : '', version: tr(d.version), date: isDate(d.date) ? d.date : '', visibility: VIS[d.visibility] ? d.visibility : 'private', url: safeUrl(d.url) });
+      if (isNew) S.outputs.push(rec);
+      commit(isNew ? '已加入成果' : '已儲存');
+    }
+  });
+}
+function goalForm(g, areaId) {
+  const isNew = !g;
+  g = g || { title: '', areaId: areaId || (S.areas[0] ? S.areas[0].id : ''), horizon: 'year', measure: '', why: '', status: 'active' };
+  const linked = isNew ? [] : S.projects.filter(p => p.goalId === g.id);
+  openModal({
+    title: isNew ? '新增目標' : '編輯目標', submit: isNew ? '建立目標' : '儲存',
+    body: `<div class="form">
+      ${fText('title', '目標', g.title, { req: true, full: true, af: isNew, ph: '例如：拿到教師證、完成 30 場演出' })}
+      ${fSel('areaId', '人生領域', areaOpts(), g.areaId)}
+      ${fSel('horizon', '時間範圍', Object.entries(HORIZON), g.horizon)}
+      ${fText('measure', '怎樣算達成', g.measure, { full: true, ph: '看得見、數得出來的標準' })}
+      ${fArea('why', '為什麼重要', g.why, { rows: 2 })}
+      ${isNew ? '' : fSel('status', '狀態', Object.entries(GSTATUS), g.status, { full: true })}
+      ${isNew ? '' : `<p class="field full" style="font-weight:400">${linked.length ? `推進這個目標的專案：${linked.map(p => esc(p.name)).join('、')}` : '還沒有專案推進這個目標。在專案的「編輯專案」裡可以選目標。'}</p>`}
+    </div>`,
+    extra: isNew ? '' : delBtn('del-goal', g.id),
+    onSave: d => {
+      const title = tr(d.title);
+      if (!title) return false;
+      const rec = isNew ? { id: uid('g'), created: nowISO() } : g;
+      Object.assign(rec, { title, areaId: area(d.areaId) ? d.areaId : '', horizon: HORIZON[d.horizon] ? d.horizon : 'year', measure: tr(d.measure), why: tr(d.why), status: GSTATUS[d.status] ? d.status : (rec.status || 'active') });
+      if (isNew) S.goals.push(rec);
+      commit(isNew ? '已建立目標' : '已儲存');
+    }
+  });
+}
+function areaForm(a) {
+  const isNew = !a;
+  const used = new Set(S.areas.map(x => x.color));
+  a = a || { name: '', color: Object.keys(COLORS).find(c => !used.has(c)) || 'slate', vision: '' };
+  openModal({
+    title: isNew ? '新增人生領域' : '編輯人生領域', submit: isNew ? '建立' : '儲存',
+    body: `<div class="form">
+      ${fText('name', '領域名稱', a.name, { req: true, full: true, af: isNew, ph: '例如：教學、健康、家人' })}
+      <fieldset class="field full swatches"><legend>顏色</legend>${Object.entries(COLORS).map(([c, n]) => `<label class="sw" style="--ac:var(--c-${c})"><input type="radio" name="color" value="${c}"${c === a.color ? ' checked' : ''}><span aria-hidden="true"></span><span class="sr-only">${n}</span></label>`).join('')}</fieldset>
+      ${fArea('vision', '三年後的樣子', a.vision, { rows: 4, af: !isNew, ph: '三年後，這個領域如果很順利，會是什麼樣子？' })}
+    </div>`,
+    extra: isNew ? '' : delBtn('del-area', a.id),
+    onSave: d => {
+      const name = tr(d.name);
+      if (!name) return false;
+      const rec = isNew ? { id: uid('a') } : a;
+      Object.assign(rec, { name, color: COLORS[d.color] ? d.color : 'slate', vision: tr(d.vision) });
+      if (isNew) S.areas.push(rec);
+      commit(isNew ? '已新增領域' : '已儲存');
+    }
+  });
+}
+function quickAdd() {
+  openModal({
+    title: '要新增什麼？', submit: '',
+    body: `<div class="qa">
+      <button type="button" class="qa-b" data-act="qa-task">${I.check}<b>待辦</b><span>一件要做的事，可以排今天</span></button>
+      <button type="button" class="qa-b" data-act="qa-log">${I.note}<b>進度紀錄</b><span>做了什麼、下次從哪裡接</span></button>
+      <button type="button" class="qa-b" data-act="new-project">${I.projects}<b>專案</b><span>需要好幾步才能完成的事</span></button>
+      <button type="button" class="qa-b" data-act="new-goal">${I.plan}<b>目標</b><span>今年、三年內或這一生想達成的</span></button>
+    </div>`
+  });
+}
+
+/* ---------- 匯入與匯出 ---------- */
+function download(name, text) {
+  const blob = new Blob([text], { type: 'application/json' }), a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+const exportText = st => JSON.stringify({ app: 'yy-lifeplan', schemaVersion: 1, savedAt: st.updatedAt, exportedAt: nowISO(), state: st }, null, 2);
+function backupNow() { download(`人生計劃備份_${stamp()}.json`, exportText(S)); meta.lastBackup = nowISO(); saveMeta(); render(); toast('已下載備份檔'); }
+function mergeWorkstation(st) {
+  const WS = { '進行中': 'doing', '待實測': 'doing', '待確認': 'doing', '待排程': 'idea', '暫緩': 'pause', '已完成': 'done' };
+  let a = S.areas.find(x => x.name === '國王才藝');
+  if (!a) { a = { id: uid('a'), name: '國王才藝', color: 'orange', vision: '' }; S.areas.push(a); }
+  const has = new Set([...S.projects, ...S.tasks, ...S.logs, ...S.outputs].map(x => x.id));
+  const n = { p: 0, t: 0, l: 0, o: 0 }, now = nowISO();
+  const okP = id => id && S.projects.some(p => p.id === 'ws-' + id);
+  for (const p of Array.isArray(st.projects) ? st.projects : []) {
+    if (!p || !p.id || !p.name || has.has('ws-' + p.id)) continue;
+    S.projects.push({
+      id: 'ws-' + p.id, name: String(p.name), areaId: a.id, goalId: '', status: WS[p.status] || 'doing',
+      summary: [p.summary || '', p.version ? `版本：${p.version}` : '', p.lane ? `主線：${p.lane}` : ''].filter(Boolean).join('\n'),
+      why: '', doneDef: '', next: p.next || '', blocker: [p.status === '待確認' || p.status === '待實測' ? p.status : '', p.blocker || ''].filter(Boolean).join('：'),
+      start: '', due: isDate(p.due) ? p.due : '', links: [], archived: !!p.archived, created: now, updated: isDate(p.updated) ? p.updated : today()
+    });
+    n.p++;
+  }
+  for (const t of Array.isArray(st.tasks) ? st.tasks : []) {
+    if (!t || !t.id || !t.title || has.has('ws-' + t.id)) continue;
+    const done = t.status === '已完成';
+    S.tasks.push({ id: 'ws-' + t.id, projectId: okP(t.projectId) ? 'ws-' + t.projectId : '', title: String(t.title), due: isDate(t.due) ? t.due : '', plan: '', repeat: '', done, doneAt: done ? (isDate(t.updated) ? `${t.updated}T12:00:00` : now) : '', note: [t.result ? `成果：${t.result}` : '', t.next ? `下一步：${t.next}` : '', !done && t.status && t.status !== '進行中' ? `狀態：${t.status}` : ''].filter(Boolean).join('\n'), created: now });
+    n.t++;
+  }
+  for (const u of Array.isArray(st.updates) ? st.updates : []) {
+    if (!u || !u.id || !okP(u.projectId) || has.has('ws-' + u.id)) continue;
+    S.logs.push({ id: 'ws-' + u.id, projectId: 'ws-' + u.projectId, date: isDate(u.date) ? u.date : today(), did: [u.title, u.result].filter(Boolean).join('：') || '（沒有內容）', next: u.next || '', link: '', created: now });
+    n.l++;
+  }
+  for (const o of Array.isArray(st.artifacts) ? st.artifacts : []) {
+    if (!o || !o.id || !o.title || has.has('ws-' + o.id)) continue;
+    S.outputs.push({ id: 'ws-' + o.id, projectId: okP(o.projectId) ? 'ws-' + o.projectId : '', title: String(o.title), version: o.version || '', url: safeUrl(o.url), date: isDate(o.date) ? o.date : '', visibility: 'company', created: now });
+    n.o++;
+  }
+  return n;
+}
+async function importFile(file) {
+  let o;
+  try { o = JSON.parse(await file.text()); } catch (e) { toast('讀不懂這個檔案，請選 .json 備份檔'); return; }
+  if (o && o.app === 'yy-lifeplan' && o.state) {
+    const st = normalize(o.state);
+    const go = () => {
+      if (S) store.set(PRE, JSON.stringify({ savedAt: nowISO(), state: S }));
+      S = st;
+      persist();
+      location.hash = '#today';
+      render();
+      toast(`已匯入備份（${st.projects.length} 個專案、${st.tasks.length} 件待辦）`);
+    };
+    if (!S || !meaningful(S)) go();
+    else confirmBox('用這份備份取代目前的資料？', `備份檔存於 ${esc(fmtTime(o.savedAt))}，有 ${st.projects.length} 個專案、${st.tasks.length} 件待辦。<br>目前的資料會先在這台裝置留一份，匯入後可以到「資料」頁復原。`, '取代', go);
+    return;
+  }
+  if (o && o.app === 'yangyang-workstation' && o.state) {
+    if (S) store.set(PRE, JSON.stringify({ savedAt: nowISO(), state: S })); else S = fresh();
+    const n = mergeWorkstation(o.state);
+    persist();
+    location.hash = '#projects';
+    render();
+    toast(n.p + n.t + n.l + n.o ? `從工作站匯入 ${n.p} 個專案、${n.t} 件待辦、${n.l} 筆紀錄、${n.o} 個成果` : '這份工作站資料都已經匯入過了');
+    return;
+  }
+  toast('這不是人生計劃或羊羊工作站的資料檔');
+}
+
+/* ---------- 同步（GitHub Gist，選用） ---------- */
+const sync = { token: '', gistId: '', lastRemote: '', lastAt: '', error: '', busy: false };
+const GIST_FILE = 'yy-lifeplan.json';
+let syncTimer = 0, pendingRemote = null;
+function syncLoad() { try { const o = JSON.parse(store.get(SYNC) || '{}'); sync.token = o.token || ''; sync.gistId = o.gistId || ''; sync.lastRemote = o.lastRemote || ''; sync.lastAt = o.lastAt || ''; } catch (e) {} }
+function syncSave() { store.set(SYNC, JSON.stringify({ token: sync.token, gistId: sync.gistId, lastRemote: sync.lastRemote, lastAt: sync.lastAt })); }
+function syncOn() { return !!(sync.token && sync.gistId); }
+async function gh(path, opt = {}) {
+  let r;
+  try {
+    r = await fetch('https://api.github.com' + path, {
+      method: opt.method || 'GET', cache: 'no-store',
+      headers: { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + sync.token, 'X-GitHub-Api-Version': '2022-11-28', ...(opt.body ? { 'Content-Type': 'application/json' } : {}) },
+      body: opt.body ? JSON.stringify(opt.body) : undefined
+    });
+  } catch (e) { throw new Error('連不上 GitHub，可能沒有網路'); }
+  if (!r.ok) throw new Error(r.status === 401 ? '金鑰無效或已經過期' : r.status === 403 ? '金鑰沒有 Gist 的讀寫權限，或短時間內請求太多次' : r.status === 404 ? '找不到同步用的 Gist（可能被刪掉了）' : `GitHub 回應錯誤（${r.status}）`);
+  return r.status === 204 ? null : r.json();
+}
+const payload = () => JSON.stringify({ app: 'yy-lifeplan', schemaVersion: 1, savedAt: S.updatedAt, state: S });
+async function pullRemote() {
+  const g = await gh('/gists/' + encodeURIComponent(sync.gistId));
+  const f = g && g.files && g.files[GIST_FILE];
+  if (!f) throw new Error('Gist 裡找不到資料檔');
+  let text = f.content;
+  if (f.truncated && safeUrl(f.raw_url)) text = await (await fetch(f.raw_url, { cache: 'no-store' })).text();
+  let o = null;
+  try { o = JSON.parse(text || 'null'); } catch (e) { throw new Error('雲端的資料檔讀不懂'); }
+  return o && o.state ? o : null;
+}
+async function pushRemote() {
+  if (!S.updatedAt) persist({ dirty: false });
+  const sentRev = rev, savedAt = S.updatedAt;
+  await gh('/gists/' + encodeURIComponent(sync.gistId), { method: 'PATCH', body: { files: { [GIST_FILE]: { content: payload() } } } });
+  sync.lastRemote = savedAt;
+  if (rev === sentRev) { meta.dirty = false; saveMeta(); }
+}
+function applyRemote(o) {
+  S = normalize(o.state);
+  S.updatedAt = o.savedAt || S.updatedAt;
+  sync.lastRemote = o.savedAt || '';
+  meta.dirty = false;
+  persist({ dirty: false, keepTime: true });
+  syncSave();
+  render();
+}
+function scheduleSync() { if (!syncOn()) return; clearTimeout(syncTimer); syncTimer = setTimeout(() => syncNow({ quiet: true }), 2500); syncPaint(); }
+async function syncNow({ quiet = false, first = false } = {}) {
+  if (!syncOn() || !S) return;
+  if (sync.busy) { scheduleSync(); return; }
+  clearTimeout(syncTimer);
+  sync.busy = true; sync.error = ''; syncPaint('同步中…');
+  const startRev = rev;
+  let note = '';
+  try {
+    const remote = await pullRemote();
+    if (rev !== startRev) { sync.busy = false; scheduleSync(); return; }
+    const rAt = remote ? remote.savedAt || '' : '';
+    const changed = !!remote && rAt !== sync.lastRemote;
+    if (first && remote) {
+      if (meaningful(S)) { sync.busy = false; syncPaint(); showConflict(remote, true); return; }
+      applyRemote(remote); note = '已讀進雲端的資料';
+    } else if (changed && meta.dirty) {
+      sync.busy = false; syncPaint(); showConflict(remote, false); return;
+    } else if (changed) {
+      applyRemote(remote); note = '已讀進另一台裝置的新資料';
+    } else if (meta.dirty || !remote) {
+      await pushRemote(); note = '已上傳到雲端';
+    } else note = '已經是最新的';
+    sync.lastAt = nowISO();
+    syncSave();
+    if (!quiet || note.startsWith('已讀進')) toast(note);
+  } catch (e) {
+    sync.error = e.message;
+    if (!quiet) toast('同步失敗：' + e.message);
+  } finally {
+    sync.busy = false;
+    syncPaint();
+  }
+}
+function showConflict(remote, first) {
+  pendingRemote = remote;
+  const rp = (remote.state.projects || []).length;
+  openModal({
+    title: first ? '雲端已經有一份資料' : '兩邊都有新的修改', submit: '',
+    body: `<p class="confirm-msg">${first ? '這台裝置也有自己的資料。要用哪一份？' : '這台裝置有還沒上傳的修改，同時雲端也被另一台裝置更新了。要用哪一份？'}</p>
+      <div class="choice">
+        <button type="button" class="w-opt" data-act="use-remote"><b>用雲端的</b><span>雲端存於 ${esc(fmtTime(remote.savedAt))}・${rp} 個專案。這台的資料會先下載成備份檔。</span></button>
+        <button type="button" class="w-opt" data-act="use-local"><b>用這台的</b><span>這台存於 ${esc(fmtTime(S.updatedAt))}・${S.projects.length} 個專案。會蓋過雲端那份。</span></button>
+      </div>`
+  });
+}
+async function syncConnect(token) {
+  sync.token = tr(token); sync.gistId = ''; sync.lastRemote = ''; sync.error = '';
+  sync.busy = true; syncPaint('連線中…');
+  const btn = $('[data-form="sync"] button'); if (btn) { btn.disabled = true; btn.textContent = '連線中…'; }
+  try {
+    let found = null;
+    for (let page = 1; page <= 5 && !found; page++) {
+      const list = await gh(`/gists?per_page=100&page=${page}`);
+      found = (list || []).find(g => g.files && g.files[GIST_FILE]);
+      if (!list || list.length < 100) break;
+    }
+    if (found) {
+      sync.gistId = found.id; syncSave(); sync.busy = false;
+      await syncNow({ first: true });
+    } else {
+      if (!S.updatedAt) persist({ dirty: false });
+      const g = await gh('/gists', { method: 'POST', body: { description: '人生計劃的同步資料（自動維護，請勿手動修改）', public: false, files: { [GIST_FILE]: { content: payload() } } } });
+      sync.gistId = g.id; sync.lastRemote = S.updatedAt; sync.lastAt = nowISO();
+      meta.dirty = false; saveMeta(); syncSave();
+      toast('已連線，資料已存到雲端');
+    }
+  } catch (e) {
+    sync.token = ''; sync.gistId = ''; sync.error = e.message; syncSave();
+    toast('連線失敗：' + e.message);
+  } finally { sync.busy = false; }
+  render();
+}
+function syncPaint(msg) {
+  const dot = $('#sync-dot');
+  if (dot) {
+    dot.hidden = !syncOn() || !S;
+    const state = msg || sync.busy ? 'busy' : sync.error ? 'err' : meta.dirty ? 'busy' : '';
+    dot.className = 'sync-dot' + (state ? ' ' + state : '');
+    dot.title = msg || (sync.error ? '同步失敗：' + sync.error : meta.dirty ? '有修改等待上傳' : '已同步');
+  }
+  const el = $('#sync-status');
+  if (el) el.innerHTML = msg ? esc(msg) : sync.error ? `<span class="err">同步失敗：${esc(sync.error)}</span>` : sync.lastAt ? `上次同步：${esc(fmtTime(sync.lastAt))}${meta.dirty ? '・有修改等待上傳' : ''}` : '還沒同步過';
+}
+
+/* ---------- 提示 ---------- */
+function toast(msg, opt = {}) {
+  const root = $('#toast'), el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<span>${esc(msg)}</span>${opt.undo ? '<button type="button">復原</button>' : ''}`;
+  if (opt.undo) el.querySelector('button').addEventListener('click', () => { el.remove(); opt.undo(); });
+  root.appendChild(el);
+  while (root.children.length > 3) root.firstElementChild.remove();
+  setTimeout(() => el.remove(), opt.undo ? 7000 : 2800);
+}
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; } catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch (err) {}
+    ta.remove(); return ok;
+  }
+}
+function setTheme(v) {
+  if (v === 'light' || v === 'dark') { store.set(THEME, v); document.documentElement.dataset.theme = v; }
+  else { store.del(THEME); delete document.documentElement.dataset.theme; }
+}
+
+/* ---------- 動作 ---------- */
+const ACT = {
+  'close-modal': () => closeModal(),
+  'quick-add': () => quickAdd(),
+  'qa-task': () => taskForm(null, { plan: today() }),
+  'qa-log': () => logForm(''),
+  toggle: id => {
+    const x = task(id); if (!x) return;
+    x.done = !x.done; x.doneAt = x.done ? nowISO() : '';
+    const p = proj(x.projectId); if (p && x.done) p.updated = today();
+    let extra = '';
+    if (x.done && x.repeat && !x.spawned) {
+      let nd = nextDue(x.due, x.repeat);
+      while (nd < today()) nd = nextDue(nd, x.repeat);
+      S.tasks.push({ ...x, id: uid('t'), done: false, doneAt: '', plan: '', due: nd, spawned: false, created: nowISO() });
+      x.spawned = true; extra = `，下一次排在 ${mdw(nd)}`;
+    }
+    commit(x.done ? `完成：${x.title}${extra}` : '改回未完成');
+  },
+  plan: id => { const x = task(id); if (!x) return; x.plan = today(); commit('排到今天了'); },
+  unplan: id => { const x = task(id); if (!x) return; x.plan = ''; commit('已移出今天'); },
+  'edit-task': id => { const x = task(id); if (x) taskForm(x); },
+  'del-task': id => { const x = task(id); if (!x) return; closeModal(); withUndo('已刪除待辦', () => { S.tasks = S.tasks.filter(t => t.id !== id); }); },
+  'new-project': () => projectForm(null),
+  'edit-project': id => { const p = proj(id); if (p) projectForm(p); },
+  'edit-next': id => { const p = proj(id); if (p) nextForm(p); },
+  archive: id => { const p = proj(id); if (!p) return; p.archived = true; location.hash = '#projects'; commit('已封存，在專案頁最下面可以找到'); },
+  unarchive: id => { const p = proj(id); if (!p) return; p.archived = false; commit('已取消封存'); },
+  'del-project': id => {
+    const p = proj(id); if (!p) return;
+    const nt = S.tasks.filter(x => x.projectId === id).length, nl = S.logs.filter(x => x.projectId === id).length, no = S.outputs.filter(x => x.projectId === id).length;
+    confirmBox('刪除這個專案？', `「${esc(p.name)}」和它的 ${nt} 件待辦、${nl} 筆紀錄、${no} 個成果都會一起刪掉。刪掉後幾秒內可以按「復原」。`, '刪除', () => {
+      const snap = JSON.stringify(S);
+      S.projects = S.projects.filter(x => x.id !== id);
+      S.tasks = S.tasks.filter(x => x.projectId !== id);
+      S.logs = S.logs.filter(x => x.projectId !== id);
+      S.outputs = S.outputs.filter(x => x.projectId !== id);
+      location.hash = '#projects';
+      commit('已刪除專案', { undo: () => { S = normalize(JSON.parse(snap)); persist(); location.hash = '#p/' + id; render(); toast('已復原'); } });
+    });
+  },
+  log: id => logForm(id),
+  'edit-log': id => { const l = byId(S.logs, id); if (l) logForm(l.projectId, l); },
+  'del-log': id => { closeModal(); withUndo('已刪除紀錄', () => { S.logs = S.logs.filter(l => l.id !== id); }); },
+  'new-output': id => outputForm(id),
+  'edit-output': id => { const o = byId(S.outputs, id); if (o) outputForm(o.projectId, o); },
+  'del-output': id => { closeModal(); withUndo('已刪除成果', () => { S.outputs = S.outputs.filter(o => o.id !== id); }); },
+  'new-goal': (id, b) => goalForm(null, b.dataset.area),
+  'edit-goal': id => { const g = goal(id); if (g) goalForm(g); },
+  'del-goal': id => { closeModal(); withUndo('已刪除目標', () => { S.goals = S.goals.filter(g => g.id !== id); S.projects.forEach(p => { if (p.goalId === id) p.goalId = ''; }); }); },
+  'new-area': () => areaForm(null),
+  'edit-area': id => { const a = area(id); if (a) areaForm(a); },
+  'del-area': id => { closeModal(); withUndo('已刪除領域，裡面的專案和目標改成未分類', () => { S.areas = S.areas.filter(a => a.id !== id); S.projects.forEach(p => { if (p.areaId === id) p.areaId = ''; }); S.goals.forEach(g => { if (g.areaId === id) g.areaId = ''; }); if (ui.area === id) ui.area = 'all'; }); },
+  'edit-vision': () => openModal({ title: '我想成為的人', body: `<div class="form">${fArea('vision', '十年後，想成為什麼樣的人？', S.profile.vision, { rows: 6, af: true, ph: '例如：一個能把舞台上的本事帶進教室的老師……' })}</div>`, onSave: d => { S.profile.vision = tr(d.vision); commit('已儲存'); } }),
+  'edit-profile': () => openModal({
+    title: '個人設定',
+    body: `<div class="form">${fText('name', '稱呼', S.profile.name, { full: true, af: true })}${fText('birthYear', '出生年份（西元）', S.profile.birthYear, { type: 'number', attrs: ' min="1900" max="2100" inputmode="numeric"', hint: '用來畫人生進度' })}${fText('lifespan', '人生進度以幾歲計', S.profile.lifespan, { type: 'number', attrs: ' min="30" max="120" inputmode="numeric"' })}</div>`,
+    onSave: d => { const by = parseInt(d.birthYear, 10), ls = parseInt(d.lifespan, 10); S.profile.name = tr(d.name).slice(0, 20); S.profile.birthYear = by >= 1900 && by <= new Date().getFullYear() ? String(by) : ''; S.profile.lifespan = ls >= 30 && ls <= 120 ? ls : 80; commit('已儲存'); }
+  }),
+  'pf-area': (id, b) => { ui.area = b.dataset.v; render(); },
+  download: () => backupNow(),
+  import: () => $('#file-in').click(),
+  'undo-import': () => {
+    let o = null; try { o = JSON.parse(store.get(PRE) || 'null'); } catch (e) {}
+    if (!o || !o.state) { toast('沒有可以復原的資料'); return; }
+    confirmBox('復原到上次匯入前？', `會回到 ${esc(fmtTime(o.savedAt))} 匯入前的那份資料，目前的資料會被取代。`, '復原', () => { S = normalize(o.state); store.del(PRE); commit('已復原到匯入前的資料'); });
+  },
+  'start-fresh': () => { S = fresh(); meta.since = today(); persist(); location.hash = '#today'; render(); toast('開始囉！先看看今天要做的事'); },
+  'start-sync': () => { S = fresh(); meta.since = today(); persist({ dirty: false }); setTimeout(() => { const el = $('#gh-token'); if (el) el.focus(); }, 60); },
+  'sync-now': () => syncNow({ quiet: false }),
+  'sync-off': () => confirmBox('中斷同步？', '這台裝置會停止和雲端同步。這台的資料和雲端那份 Gist 都會留著，之後可以重新連線。', '中斷', () => { sync.token = ''; sync.gistId = ''; sync.lastRemote = ''; sync.error = ''; syncSave(); render(); toast('已中斷同步'); }),
+  'use-remote': () => { if (!pendingRemote) return; download(`人生計劃_被取代的本機資料_${stamp()}.json`, exportText(S)); const r = pendingRemote; pendingRemote = null; closeModal(); applyRemote(r); sync.lastAt = nowISO(); syncSave(); syncPaint(); toast('已改用雲端的資料，原本的已下載成備份'); },
+  'use-local': () => { if (!pendingRemote) return; sync.lastRemote = pendingRemote.savedAt || ''; pendingRemote = null; meta.dirty = true; saveMeta(); syncSave(); closeModal(); syncNow({ quiet: false }); },
+  'review-copy': async (id, b) => { flushReview(); toast(await copyText(weekSummary(b.dataset.week)) ? '已複製這週的摘要' : '複製失敗，請手動選取'); },
+  'review-top3': (id, b) => {
+    const f = $('form[data-form="review"]'); if (f) saveReview(f, false);
+    const wk = b.dataset.week, r = S.reviews[wk] || {}, top = (r.top || []).filter(Boolean);
+    if (!top.length) { toast('先寫下下週最重要的三件事'); return; }
+    const nextMon = addDays(weekMonday(wk), 7);
+    top.forEach(title => S.tasks.push({ id: uid('t'), projectId: '', title, due: '', plan: nextMon > today() ? '' : today(), repeat: '', done: false, doneAt: '', note: `來自 ${md(weekMonday(wk))} 那週的回顧`, created: nowISO() }));
+    r.topAdded = true; S.reviews[wk] = r;
+    commit(`已把 ${top.length} 件事加進待辦，可以再到專案裡歸類`);
+  },
+  wipe: () => confirmBox('清除這台裝置的資料？', '按下「清除」後會先下載一份備份，接著把這台裝置上的人生計劃資料全部清掉。', '清除', () => {
+    download(`人生計劃_清除前備份_${stamp()}.json`, exportText(S));
+    store.del(KEY); store.del(PRE);
+    sync.token = ''; sync.gistId = ''; sync.lastRemote = ''; syncSave();
+    S = null; meta.dirty = false; meta.lastBackup = ''; saveMeta();
+    location.hash = ''; render(); toast('已清除，備份檔已下載');
+  })
+};
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]');
+  if (!b || b.disabled) return;
+  const fn = ACT[b.dataset.act];
+  if (!fn) return;
+  if (b.tagName !== 'A') e.preventDefault();
+  fn(b.dataset.id, b, e);
+});
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.id === 'file-in') { const f = el.files && el.files[0]; el.value = ''; if (f) importFile(f); return; }
+  const k = el.dataset.change;
+  if (k === 'p-status') {
+    const p = proj(el.dataset.id); if (!p) return;
+    p.status = STATUS[el.value] ? el.value : p.status; p.updated = today();
+    commit(p.status === 'done' ? '完成一個專案，辛苦了！' : `狀態改成「${STATUS[p.status]}」`);
+  } else if (k === 'pf-done') { ui.showDone = el.checked; render(); }
+  else if (k === 'theme') setTheme(el.value);
+});
+document.addEventListener('input', e => {
+  const f = e.target.closest && e.target.closest('form[data-form="review"]');
+  if (!f) return;
+  clearTimeout(rvTimer); rvForm = f;
+  const st = f.querySelector('.rv-state'); if (st) st.textContent = '輸入中…';
+  rvTimer = setTimeout(() => saveReview(f, false), 700);
+});
+document.addEventListener('submit', e => {
+  const f = e.target;
+  if (f.closest('dialog')) return;
+  const k = f.dataset.form;
+  if (!k) return;
+  e.preventDefault();
+  const field = n => f.elements.namedItem(n);
+  if (k === 'quick-task') {
+    const title = tr(field('title').value); if (!title) return;
+    const pid = field('projectId').value;
+    S.tasks.push({ id: uid('t'), projectId: proj(pid) ? pid : '', title, due: '', plan: today(), repeat: '', done: false, doneAt: '', note: '', created: nowISO() });
+    field('title').value = '';
+    commit('已加入今天');
+  } else if (k === 'add-task') {
+    const title = tr(field('title').value); if (!title) return;
+    const due = field('due').value;
+    S.tasks.push({ id: uid('t'), projectId: f.dataset.id, title, due: isDate(due) ? due : '', plan: '', repeat: '', done: false, doneAt: '', note: '', created: nowISO() });
+    field('title').value = ''; field('due').value = '';
+    commit('已加入待辦');
+  } else if (k === 'review') {
+    saveReview(f, true); render(); toast('這週的回顧完成了');
+  } else if (k === 'sync') {
+    syncConnect(field('token').value);
+  }
+});
+document.addEventListener('toggle', e => {
+  const d = e.target;
+  if (!(d instanceof HTMLDetailsElement) || !d.dataset.key) return;
+  if (d.open) { ui.open.add(d.dataset.key); ui.closed.delete(d.dataset.key); }
+  else { ui.closed.add(d.dataset.key); ui.open.delete(d.dataset.key); }
+}, true);
+
+/* ---------- 開始 ---------- */
+load();
+syncLoad();
+render();
+window.addEventListener('hashchange', () => { flushReview(); render(); });
+window.addEventListener('storage', e => {
+  if (e.key !== KEY) return;
+  if (!e.newValue) { S = null; render(); return; }
+  try { const o = JSON.parse(e.newValue); if (o && o.state) { S = normalize(o.state); render(); } } catch (err) {}
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') { flushReview(); return; }
+  if (S && today() !== lastDay && !dlg.open) render();
+  if (S && syncOn()) syncNow({ quiet: true });
+});
+window.addEventListener('online', () => { if (S && syncOn()) syncNow({ quiet: true }); });
+window.addEventListener('pagehide', flushReview);
+if (S && syncOn()) syncNow({ quiet: true });
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+})();
+</script>
+</body>
+</html>
