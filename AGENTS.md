@@ -27,6 +27,7 @@
 
 - `cat` 使用既有分類。新增分類時也加進 `const CAT` 陣列，這裡決定篩選按鈕的順序。
 - 有封面時，以 `coverInfo` 物件記錄 `alt`、`caption`、`width`、`height`。段落中可放 `["photo", {"src":"images/…","alt":"…","caption":"…","width":1200,"height":800}]`。
+- 備課流程可用 `["steps", [["步驟名稱","說明"], …]]`。段落的出處可用 `["source", {"text":"…","url":"https://…"}]`。若使用來源網站提供的連結預覽，在該張 `photo` 加上 `href` 與 `linkText`，連回可放大或觀看的原件。
 - YouTube 影片使用 `video` 物件，填入原頻道的影片 `id`、`title`、`caption`，需要指定起點可加秒數 `start`。內文也支援 `["video", {…}]`。播放器按下播放後才載入，另有原站觀看連結。
 - 沒有外部連結時 `link` 寫 `null`。
 - 圖片放在 `images/` 資料夾，用相對路徑引用（例如 `images/chem-site.jpg`），先壓到寬 1600px 以內。
