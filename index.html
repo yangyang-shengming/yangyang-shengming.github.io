@@ -8,6 +8,10 @@
 <title>楊勝銘｜羊羊老師的教學與表演作品</title>
 <meta name="description" content="我是楊勝銘，大家叫我羊羊老師。從國一祈使句的魔術課、苑裡高中的互動化學教材，到新竹街頭的演出，這裡收著我的教案、課程與舞臺作品。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%23ad2836'/%3E%3Cpath d='m16 9 4 6m12-6-4 6M10 17h28M12 24h24M8 31h32M24 17v23' stroke='white' stroke-width='3' fill='none'/%3E%3C/svg%3E">
+<script>
+  /* 亮暗模式：右上角按鈕切換，記在 localStorage 的 yy-theme（和 plan/ 共用）；沒選過就跟著系統 */
+  try { var t = localStorage.getItem('yy-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
 <style>
 :root{
   color-scheme:light;
@@ -18,9 +22,11 @@
   --gutter:clamp(20px,5vw,76px);
 }
 @media(prefers-color-scheme:dark){
-  :root{color-scheme:dark;--paper:#1c1b1a;--surface:#222220;--tint:#292926;--ink:#f4f1e9;--muted:#c2bfb5;
+  :root:not([data-theme=light]){color-scheme:dark;--paper:#1c1b1a;--surface:#222220;--tint:#292926;--ink:#f4f1e9;--muted:#c2bfb5;
     --line:#45453e;--accent:#ff9298;--on-accent:#291618;--ink-button:#eeeae1;--on-button:#24231f}
 }
+:root[data-theme=dark]{color-scheme:dark;--paper:#1c1b1a;--surface:#222220;--tint:#292926;--ink:#f4f1e9;--muted:#c2bfb5;
+  --line:#45453e;--accent:#ff9298;--on-accent:#291618;--ink-button:#eeeae1;--on-button:#24231f}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.75 var(--sans);overflow-wrap:break-word}
 h1,h2,h3,p,figure,dl,dd{margin:0}
@@ -43,6 +49,9 @@ nav{display:flex;align-items:center;gap:clamp(12px,3vw,34px)}
 nav a{display:inline-flex;align-items:center;min-height:44px;position:relative;font-size:14px;font-weight:700;white-space:nowrap}
 nav a:hover,nav a[aria-current]{color:var(--accent)}
 nav a[aria-current]::after{content:"";height:2px;background:currentColor;position:absolute;inset:auto 0 3px}
+.theme-toggle{display:inline-grid;place-items:center;width:40px;height:40px;flex:none;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--ink);cursor:pointer;padding:0}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.theme-toggle svg{width:18px;height:18px;display:block}
 .hero{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);align-items:center;gap:clamp(30px,7vw,100px);padding-block:clamp(26px,3.7vw,54px)}
 .intro{padding-block:16px}
 .kicker,.category{color:var(--accent);font-size:14px;font-weight:750;letter-spacing:.08em}
@@ -118,10 +127,18 @@ article p+p{margin-top:1em}article ul{padding-inline-start:1.4em;margin:0}articl
 .facts{padding:20px 22px;background:var(--tint);border-top:2px solid var(--accent)}
 .facts dt{font-size:13px;color:var(--muted);font-weight:700}.facts dd+dt{margin-top:12px}.facts a{margin-top:16px}
 .related{padding-bottom:56px}
-footer{border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
-footer .wrap{display:flex;align-items:center;justify-content:space-between;gap:15px;padding-block:18px}
-footer a{min-height:44px;display:inline-flex;align-items:center;color:var(--ink);font-weight:700}
-section[id],h1,h2,main{scroll-margin-block-start:86px}
+footer{border-top:1px solid var(--line);background:var(--surface);font-size:14px;color:var(--muted)}
+.contact{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(24px,6vw,80px);padding-block:clamp(44px,6vw,76px) clamp(30px,4vw,48px)}
+.contact-lead{margin-top:12px;max-width:22em;font-size:16px;line-height:1.85;color:var(--muted)}
+.contact-list{border-top:2px solid var(--ink)}
+.contact-list>div{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:12px;align-items:center;min-height:56px;padding:4px 0;border-bottom:1px solid var(--line)}
+.contact-list dt{font-weight:700;color:var(--muted);font-size:14px}
+.contact-list dd{min-width:0;color:var(--ink);font-weight:700;font-size:17px;overflow-wrap:anywhere}
+.contact-list a{display:inline-flex;align-items:center;min-height:44px;text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:2px;text-underline-offset:.28em}
+.contact-list a:hover{color:var(--accent)}
+.foot-bottom{display:flex;align-items:center;justify-content:space-between;gap:4px 16px;flex-wrap:wrap;padding-block:10px 14px;background:linear-gradient(var(--line),var(--line)) center top/calc(100% - 2 * var(--gutter)) 1px no-repeat}
+.foot-bottom a{min-height:44px;display:inline-flex;align-items:center;color:var(--ink);font-weight:700}
+section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
 @media(max-width:800px){
   .feature-layout{gap:24px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   .feature-side{grid-template-columns:minmax(0,1fr) 95px;gap:12px}
@@ -145,7 +162,10 @@ section[id],h1,h2,main{scroll-margin-block-start:86px}
   .entry .category{font-size:13px}.entry p{font-size:15px}
   .detail-head{padding-block:14px 22px}.back{margin-bottom:12px}
   .detail-body{gap:24px;padding-block:24px 40px}
-  section[id],h1,h2,main{scroll-margin-block-start:73px}
+  .contact{grid-template-columns:minmax(0,1fr);gap:18px}
+  .contact-list>div{grid-template-columns:4.6em minmax(0,1fr)}.contact-list dd{font-size:16px}
+  .theme-toggle{width:36px;height:36px}
+  section[id],footer[id],h1,h2,main{scroll-margin-block-start:73px}
 }
 @media(max-width:360px){.bar{flex-wrap:wrap;gap:0 10px}.brand{font-size:16px}nav{gap:10px}.roles{letter-spacing:0}.actions{gap:8px 14px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
@@ -167,7 +187,7 @@ section[id],h1,h2,main{scroll-margin-block-start:86px}
 <a class="skip" id="skip" href="#main-content">跳至主要內容</a>
 <header><div class="wrap bar">
   <a class="brand" href="#home"><span class="brand-mark" aria-hidden="true">羊</span>羊羊老師</a>
-  <nav aria-label="主選單"><a href="#works">作品</a><a href="#do">關於我</a><a href="#exp">經歷</a></nav>
+  <nav aria-label="主選單"><a href="#works">作品</a><a href="#do">關於我</a><a href="#exp">經歷</a><a href="#contact">聯絡</a><button type="button" class="theme-toggle" id="theme-toggle" aria-label="切換成深色"></button></nav>
 </div></header>
 
 <main id="main-content" tabindex="-1">
@@ -251,7 +271,21 @@ section[id],h1,h2,main{scroll-margin-block-start:86px}
 <div id="v-work" hidden></div>
 </main>
 
-<footer><div class="wrap"><span>© 2026 楊勝銘</span><a href="#home">回首頁 <span aria-hidden="true">↑</span></a></div></footer>
+<!-- 聯絡方式是羊羊指定公開的（2026-11-23）。改網站內容時，記得更新下面的「網站更新」日期。 -->
+<footer id="contact" aria-labelledby="contact-title">
+  <div class="wrap contact">
+    <div>
+      <h2 class="section-title" id="contact-title" tabindex="-1">聯絡我</h2>
+      <p class="contact-lead">邀請授課、演出或合作，歡迎來信或加 LINE。</p>
+    </div>
+    <dl class="contact-list">
+      <div><dt>姓名</dt><dd>楊勝銘（羊羊老師）</dd></div>
+      <div><dt>Email</dt><dd><a href="mailto:youngyoungccc20@gmail.com">youngyoungccc20@gmail.com</a></dd></div>
+      <div><dt>LINE ID</dt><dd><a href="https://line.me/ti/p/~tomas9420" target="_blank" rel="noopener">tomas9420</a></dd></div>
+    </dl>
+  </div>
+  <div class="wrap foot-bottom"><span>© 2026 楊勝銘・網站更新：<time datetime="2026-11-23">2026 年 11 月 23 日</time></span><a href="#home">回首頁 <span aria-hidden="true">↑</span></a></div>
+</footer>
 <noscript><p class="wrap">開啟 JavaScript 即可瀏覽完整作品和使用分類篩選。</p></noscript>
 <script>
 {
@@ -348,7 +382,7 @@ section[id],h1,h2,main{scroll-margin-block-start:86px}
 
   function route(moveFocus = true) {
     const hash = readHash();
-    const homeSections = {do:'about-title', exp:'exp-title', featured:'featured-title'};
+    const homeSections = {do:'about-title', exp:'exp-title', featured:'featured-title', contact:'contact-title'};
     const section = Object.hasOwn(homeSections,hash) ? hash : '';
     const work = hash.startsWith('work-') ? worksById.get(hash.slice(5)) : null;
     const view = work ? 'work' : hash === 'works' ? 'works' : 'home';
@@ -383,6 +417,36 @@ section[id],h1,h2,main{scroll-margin-block-start:86px}
   });
   window.addEventListener('hashchange', () => route());
   route(false);
+
+  // 亮暗切換：按一下換成另一種，記在 yy-theme（和 plan/ 共用）
+  const themeButton = document.getElementById('theme-toggle');
+  const darkQuery = matchMedia('(prefers-color-scheme: dark)');
+  const svg = path => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${path}</svg>`;
+  const moonIcon = svg('<path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/>');
+  const sunIcon = svg('<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6L6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/>');
+  const currentTheme = () => document.documentElement.dataset.theme || (darkQuery.matches ? 'dark' : 'light');
+  function paintTheme() {
+    const dark = currentTheme() === 'dark';
+    const label = dark ? '切換成淺色' : '切換成深色';
+    themeButton.innerHTML = dark ? sunIcon : moonIcon;
+    themeButton.setAttribute('aria-label', label);
+    themeButton.title = label;
+    for (const meta of document.querySelectorAll('meta[name="theme-color"]')) meta.setAttribute('content', dark ? '#1c1b1a' : '#faf9f6');
+  }
+  themeButton.addEventListener('click', () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem('yy-theme', next); } catch {}
+    paintTheme();
+  });
+  darkQuery.addEventListener('change', paintTheme);
+  window.addEventListener('storage', event => {
+    if (event.key !== 'yy-theme') return;
+    if (event.newValue === 'light' || event.newValue === 'dark') document.documentElement.dataset.theme = event.newValue;
+    else delete document.documentElement.dataset.theme;
+    paintTheme();
+  });
+  paintTheme();
 }
 </script>
 </body>
