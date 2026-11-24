@@ -32,7 +32,8 @@
      「羊羊工作站 v2.0」的資料檔（app = yangyang-workstation）會合併進來，id 加上 ws- 前綴，重複匯入不會重複。
   5. 同步（選用）：使用者自己貼 GitHub 金鑰（只開 Gist 讀寫），資料存成帳號裡的秘密 Gist，檔名 yy-lifeplan.json。
      金鑰只存在該裝置的 localStorage（yy-lifeplan-sync）。
-  6. 改完在 390px 與 1366px 寬各看一次，確認沒有水平捲軸、主控台沒有錯誤。
+  6. Google 日曆設定只存在這台瀏覽器的 yy-lifeplan-calendar；不放入備份或 Gist。
+  7. 改完在 390px 與 1366px 寬各看一次，確認沒有水平捲軸、主控台沒有錯誤。
 -->
 <style>
 /* VOICE   安靜、可靠、像一本自己的筆記本。打開就知道今天要做什麼。
@@ -416,6 +417,13 @@ button.ac-vision:hover{border-color:var(--edge);color:var(--ink)}
 .sync-form{display:flex;gap:8px;flex-wrap:wrap}
 .sync-form .in{flex:1 1 220px;width:auto}
 .fine{font-size:12.5px!important;color:var(--muted)!important;margin-top:12px}
+
+/* ---------- 行事曆 ---------- */
+.calendar-card{margin-bottom:32px}
+.calendar-card .card-h{flex-wrap:wrap}
+.calendar-frame{display:block;width:100%;height:clamp(460px,72dvh,780px);border:1px solid var(--line);border-radius:12px;background:#fff}
+.calendar-help{margin-bottom:14px;color:var(--ink2);font-size:14px;line-height:1.65}
+.calendar-error{margin-top:10px;color:var(--danger);font-size:13px}
 .err{color:var(--danger)}
 .theme-pick{display:flex;gap:6px;flex-wrap:wrap}
 .theme-pick label{position:relative}
@@ -494,7 +502,7 @@ dialog::backdrop{background:rgba(15,17,20,.45)}
   .top-in{padding:0 16px;height:58px}
   .tabs{display:none}
   .brand small{display:none}
-  .bottom{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:40;background:color-mix(in srgb,var(--surface) 94%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+  .bottom{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:40;background:color-mix(in srgb,var(--surface) 94%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
   .bottom a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;font-size:11.5px;font-weight:600;color:var(--faint);text-decoration:none}
   .bottom a[aria-current=page]{color:var(--ink)}
   main{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
@@ -528,7 +536,7 @@ dialog::backdrop{background:rgba(15,17,20,.45)}
   <div class="top-in">
     <a class="brand" href="#today"><span class="mark hand" aria-hidden="true">羊</span><span><b class="hand" id="brand-name">人生計劃</b><small>把每條線都接成下一步</small></span></a>
     <nav class="tabs" aria-label="主選單">
-      <a href="#today" data-nav="today">今天</a><a href="#projects" data-nav="projects">專案</a><a href="#plan" data-nav="plan">藍圖</a><a href="#review" data-nav="review">回顧</a><a href="#data" data-nav="data">資料</a>
+      <a href="#today" data-nav="today">今天</a><a href="#calendar" data-nav="calendar">行事曆</a><a href="#projects" data-nav="projects">專案</a><a href="#plan" data-nav="plan">藍圖</a><a href="#review" data-nav="review">回顧</a><a href="#data" data-nav="data">資料</a>
     </nav>
     <span class="sync-dot" id="sync-dot" hidden></span>
     <button type="button" class="icon-btn theme-btn" id="theme-btn" data-act="toggle-theme" aria-label="切換成深色"></button>
@@ -545,6 +553,7 @@ dialog::backdrop{background:rgba(15,17,20,.45)}
 (() => {
 'use strict';
 const KEY = 'yy-lifeplan-v1', META = 'yy-lifeplan-meta', PRE = 'yy-lifeplan-before-import', SYNC = 'yy-lifeplan-sync', THEME = 'yy-theme', OLD_THEME = 'yy-lifeplan-theme';
+const CALENDAR = 'yy-lifeplan-calendar';
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } },
@@ -618,6 +627,7 @@ const I = {
   x: ic('<path d="M6 6l12 12M18 6L6 18"/>'),
   repeat: ic('<path d="M17 2.5l3 3-3 3"/><path d="M4 11.5v-1a5 5 0 015-5h11"/><path d="M7 21.5l-3-3 3-3"/><path d="M20 12.5v1a5 5 0 01-5 5H4"/>', 13),
   today: ic('<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>', 21),
+  calendar: ic('<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M8 14h1m3 0h1m3 0h1M8 17h1m3 0h1"/>', 21),
   projects: ic('<rect x="3.5" y="4" width="7" height="16" rx="2"/><rect x="13.5" y="4" width="7" height="10" rx="2"/>', 21),
   plan: ic('<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".6"/>', 21),
   review: ic('<path d="M4 12a8 8 0 108-8 8.5 8.5 0 00-6 2.5L4 8.5"/><path d="M4 3.5v5h5"/><path d="M12 8v4.5l3 2"/>', 21),
@@ -1220,6 +1230,74 @@ function syncCard() {
   </section>`;
 }
 
+/* ---------- Google 日曆 ---------- */
+const GOOGLE_CALENDAR = 'https://calendar.google.com/calendar/';
+const GOOGLE_CALENDAR_EMBED = `${GOOGLE_CALENDAR}embed`;
+const calendarId = /^[\w.!#$%&'*+/=?^`{|}~-]+@[a-z\d-]+(?:\.[a-z\d-]+)+$/i;
+
+function parseCalendarSources(text) {
+  const sources = [];
+  for (const line of String(text ?? '').split(/\r?\n/).map(tr).filter(Boolean)) {
+    if (calendarId.test(line)) {
+      sources.push(line);
+      continue;
+    }
+    let url;
+    try { url = new URL(line); } catch (e) { return null; }
+    if (`${url.origin}${url.pathname}` !== GOOGLE_CALENDAR_EMBED || url.username || url.password || url.hash) return null;
+    const ids = url.searchParams.getAll('src');
+    if (!ids.length || ids.some(id => !calendarId.test(id))) return null;
+    sources.push(...ids);
+  }
+  return [...new Set(sources)];
+}
+
+function calendarEmbedUrl(sources) {
+  const url = new URL(GOOGLE_CALENDAR_EMBED);
+  for (const id of sources) url.searchParams.append('src', id);
+  url.searchParams.set('ctz', 'Asia/Taipei');
+  url.searchParams.set('mode', matchMedia('(max-width: 760px)').matches ? 'AGENDA' : 'WEEK');
+  return url.href;
+}
+
+function vCalendar() {
+  const sources = parseCalendarSources(store.get(CALENDAR)) || [];
+  return `<div class="page-head">
+    <div><h1 class="hand">行事曆</h1><p>在工作站查看 Google 日曆行程。</p></div>
+    <a class="btn" href="${GOOGLE_CALENDAR}" target="_blank" rel="noopener noreferrer">開啟 Google 日曆 ${I.arrow}</a>
+  </div>
+  <section class="card calendar-card" aria-labelledby="h-calendar">
+    <div class="card-h"><h2 id="h-calendar">Google 日曆</h2>${sources.length ? '<button type="button" class="btn sm" data-act="calendar-settings">編輯日曆設定</button>' : ''}</div>
+    ${sources.length ? `<iframe class="calendar-frame" title="Google 日曆行程" src="${esc(calendarEmbedUrl(sources))}" referrerpolicy="no-referrer"></iframe>
+      <p class="fine">日曆權限由 Google 管理。如果在這裡看不到行程，可透過「開啟 Google 日曆」直接查看。</p>` : `
+      <p class="empty-line">貼上 Google 日曆 ID 或內嵌網址，即可在這裡查看行程。</p>
+      <div class="row-btns"><button type="button" class="btn primary" data-act="calendar-settings">設定 Google 日曆</button></div>`}
+  </section>`;
+}
+
+function calendarForm() {
+  const sources = parseCalendarSources(store.get(CALENDAR)) || [];
+  openModal({
+    title: '設定 Google 日曆',
+    body: `<p class="calendar-help">從該日曆的「設定和共用」→「整合日曆」複製日曆 ID。要顯示多本日曆時，每行貼一個。</p>
+      <div class="form">${fArea('sources', '日曆 ID 或內嵌網址', sources.join('\n'), { af: true })}</div>
+      <p class="calendar-error" role="alert" hidden></p>
+      <p class="fine">這項設定只存在這台瀏覽器。Google 會依原有的日曆權限顯示內容。</p>`,
+    extra: sources.length ? '<button type="button" class="btn ghost danger" data-act="calendar-clear">移除設定</button>' : '',
+    onSave: (d, form) => {
+      const ids = parseCalendarSources(d.sources);
+      const err = $('.calendar-error', form);
+      if (!ids?.length || !store.set(CALENDAR, ids.join('\n'))) {
+        err.textContent = !ids?.length ? '請輸入有效的日曆 ID 或 Google 日曆內嵌網址。' : '這台瀏覽器目前無法儲存日曆設定。';
+        err.hidden = false;
+        return false;
+      }
+      render();
+      toast('已儲存日曆設定');
+    }
+  });
+}
+
 /* ---------- 歡迎頁 ---------- */
 function vWelcome() {
   return `<section class="welcome">
@@ -1236,15 +1314,15 @@ function vWelcome() {
 }
 
 /* ---------- 畫面切換 ---------- */
-const VIEWS = { today: vToday, projects: vProjects, p: vProject, plan: vPlan, review: vReview, data: vData };
-const NAV = [['today', '今天', I.today], ['projects', '專案', I.projects], ['plan', '藍圖', I.plan], ['review', '回顧', I.review], ['data', '資料', I.data]];
+const VIEWS = { today: vToday, calendar: vCalendar, projects: vProjects, p: vProject, plan: vPlan, review: vReview, data: vData };
+const NAV = [['today', '今天', I.today], ['calendar', '行事曆', I.calendar], ['projects', '專案', I.projects], ['plan', '藍圖', I.plan], ['review', '回顧', I.review], ['data', '資料', I.data]];
 $('#bottom-nav').innerHTML = NAV.map(([k, l, i]) => `<a href="#${k}" data-nav="${k}">${i}<span>${l}</span></a>`).join('');
 function route() {
   const h = decodeURIComponent(location.hash.slice(1)) || 'today';
   const i = h.indexOf('/'), view = i < 0 ? h : h.slice(0, i), arg = i < 0 ? '' : h.slice(i + 1);
   return VIEWS[view] ? { view, arg } : { view: 'today', arg: '' };
 }
-let lastHash = null, lastDay = today();
+let lastHash = null, lastDay = today(), lastCalendarMarkup = '';
 function render() {
   const view = $('#view');
   const ae = document.activeElement;
@@ -1253,6 +1331,7 @@ function render() {
   document.body.classList.toggle('no-data', !S);
   lastDay = today();
   if (!S) {
+    lastCalendarMarkup = '';
     view.innerHTML = vWelcome();
     document.title = '人生計劃';
     $('#brand-name').textContent = '人生計劃';
@@ -1260,10 +1339,12 @@ function render() {
     return;
   }
   const r = route();
-  view.innerHTML = VIEWS[r.view](r.arg);
+  const markup = VIEWS[r.view](r.arg);
+  if (r.view !== 'calendar' || markup !== lastCalendarMarkup) view.innerHTML = markup;
+  lastCalendarMarkup = r.view === 'calendar' ? markup : '';
   const navKey = r.view === 'p' ? 'projects' : r.view;
   document.querySelectorAll('[data-nav]').forEach(a => { if (a.dataset.nav === navKey) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
-  const titles = { today: '今天', projects: '專案', plan: '人生藍圖', review: '週回顧', data: '資料與設定' };
+  const titles = { today: '今天', calendar: '行事曆', projects: '專案', plan: '人生藍圖', review: '週回顧', data: '資料與設定' };
   const pTitle = r.view === 'p' && proj(r.arg) ? proj(r.arg).name : titles[r.view] || '';
   document.title = `${pTitle}｜${S.profile.name ? S.profile.name + '的' : ''}人生計劃`;
   $('#brand-name').textContent = `${S.profile.name ? S.profile.name + '的' : ''}人生計劃`;
@@ -1784,6 +1865,12 @@ const ACT = {
     onSave: d => { const by = parseInt(d.birthYear, 10), ls = parseInt(d.lifespan, 10); S.profile.name = tr(d.name).slice(0, 20); S.profile.birthYear = by >= 1900 && by <= new Date().getFullYear() ? String(by) : ''; S.profile.lifespan = ls >= 30 && ls <= 120 ? ls : 80; commit('已儲存'); }
   }),
   'pf-area': (id, b) => { ui.area = b.dataset.v; render(); },
+  'calendar-settings': () => calendarForm(),
+  'calendar-clear': () => {
+    store.del(CALENDAR);
+    if (store.get(CALENDAR)) { toast('這台瀏覽器目前無法移除日曆設定'); return; }
+    closeModal(); render(); toast('已移除日曆設定');
+  },
   download: () => backupNow(),
   import: () => $('#file-in').click(),
   'undo-import': () => {
@@ -1809,7 +1896,7 @@ const ACT = {
   },
   wipe: () => confirmBox('清除這台裝置的資料？', '按下「清除」後會先下載一份備份，接著把這台裝置上的人生計劃資料全部清掉。', '清除', () => {
     download(`人生計劃_清除前備份_${stamp()}.json`, exportText(S));
-    store.del(KEY); store.del(PRE);
+    store.del(KEY); store.del(PRE); store.del(CALENDAR);
     sync.token = ''; sync.gistId = ''; sync.lastRemote = ''; syncSave();
     S = null; meta.dirty = false; meta.lastBackup = ''; saveMeta();
     location.hash = ''; render(); toast('已清除，備份檔已下載');
@@ -1882,6 +1969,7 @@ render();
 darkQuery.addEventListener('change', paintTheme);
 window.addEventListener('hashchange', () => { flushReview(); render(); });
 window.addEventListener('storage', e => {
+  if (e.key === CALENDAR) { if (S && route().view === 'calendar') render(); return; }
   if (e.key === THEME) {
     if (e.newValue === 'light' || e.newValue === 'dark') document.documentElement.dataset.theme = e.newValue; else delete document.documentElement.dataset.theme;
     paintTheme(); if (S && route().view === 'data') render();
