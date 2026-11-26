@@ -149,6 +149,8 @@ article p+p{margin-top:1em}article ul{padding-inline-start:1.4em;margin:0}articl
 .film-block video{display:block;width:100%;height:auto;border-radius:2px;background:#191818}
 .film-block a,.body-link{color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:.2em}
 article .detail-photo:not(:first-child),article .film-block:not(:first-child){margin-top:20px}
+.photo-pair{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:16px;margin:20px 0 24px}
+article .photo-pair .detail-photo{margin:0}
 .facts a.button{font-size:15px}.source-links{display:grid;gap:8px;margin-top:18px}.source-links a{margin:0;text-decoration:underline;text-underline-offset:.2em}
 @media(max-width:900px){.work-grid,.field-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.work-grid,.field-grid{grid-template-columns:minmax(0,1fr)}.work-tile .tile-image{aspect-ratio:1.9}.field-grid{gap:25px}.film-still span,.play-film span{bottom:8px;left:8px}.play-film span{font-size:13px}}
@@ -190,6 +192,7 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
   .entry .category{font-size:13px}.entry p{font-size:15px}
   .detail-head{padding-block:14px 22px}.back{margin-bottom:12px}
   .detail-body{gap:24px;padding-block:24px 40px}
+  .photo-pair{grid-template-columns:minmax(0,1fr)}
   .contact{grid-template-columns:minmax(0,1fr);gap:18px}
   .contact-list>div{grid-template-columns:4.6em minmax(0,1fr)}.contact-list dd{font-size:16px}
   .theme-toggle{width:36px;height:36px}
@@ -248,11 +251,11 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
     "title":"赤狐魔術社｜籌辦慈善晚會",
     "cat":"表演",
     "date":"2022–2023 年",
-    "cover":"images/red-fox-charity-sign-2022.webp",
+    "cover":"images/red-fox-disc-yellow-2022.webp",
     "coverInfo":{
-      "width":1440,"height":978,
-      "alt":"演藝廳外立著黑色立牌，上面寫著 2022 清交魔術社聯合慈善晚會和 10 月 16 日。",
-      "caption":"2022 年 10 月 15 日，慈善晚會前一天的演藝廳入口。"
+      "width":452,"height":301,
+      "alt":"我穿著黑色西裝，在紅黃舞臺燈前舉起黃色光碟。",
+      "caption":"2022 年 10 月 16 日，我在交大演藝廳表演光碟魔術。"
     },
     "summary":"赤狐社長任內，我為 2022 年清交慈善晚會申請場地、協調保險。晚會當天，我也上臺演出光碟魔術。",
     "role":"赤狐魔術社第十九屆社長，負責晚會場地申請、企畫送件及保險協調，也參與演出",
@@ -263,11 +266,29 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
       ["h","開演前的場地準備"],
       ["p","10 月 4 日，我以赤狐社長身分向校方申請在 15、16 日借用活動中心二樓演藝廳，並編列公共意外責任險。我也把兩校的活動企畫送出，內容參考往屆流程，從觀眾入場排到散場後的場地復原。"],
       ["photo",{
+        "src":"images/red-fox-charity-sign-2022.webp","width":1440,"height":978,
+        "alt":"演藝廳外立著黑色立牌，上面寫著 2022 清交魔術社聯合慈善晚會和 10 月 16 日。",
+        "caption":"2022 年 10 月 15 日，慈善晚會前一天的演藝廳入口。"
+      }],
+      ["photo",{
         "src":"images/red-fox-charity-entrance-2022.webp","width":1440,"height":1080,
         "alt":"演藝廳入口的長桌、立牌架與紅色繩欄。",
         "caption":"10 月 15 日布置現場，演藝廳外的長桌和紅色繩欄已經擺好。"
       }],
+      ["h","光碟魔術演出"],
       ["p","當晚上臺時，我把紅、綠、黃等不同顏色的光碟帶進同一段魔術表演。"],
+      ["photo-pair",[
+        {
+          "src":"images/red-fox-disc-toss-2022.webp","width":303,"height":455,
+          "alt":"我抬頭看著拋在空中的黃色光碟，腳邊亮著紅色舞臺燈。",
+          "caption":"拋起光碟的瞬間。"
+        },
+        {
+          "src":"images/red-fox-disc-red-2022.webp","width":452,"height":301,
+          "alt":"我在舞臺上側身舉起紅色光碟。",
+          "caption":"側身向觀眾展示紅色光碟。"
+        }
+      ]],
       ["h","把魔術帶到演藝廳之外"],
       ["p","2023 年 3 月，我到心路基金會演出和教魔術。這次在活動空間裡，觀眾就在面前，身邊一個打開的道具箱就是我的工作臺。"],
       ["photo",{
@@ -522,6 +543,7 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
           <p>${escapeHtml(value.note)}</p></details></div>`;
     }
     if (type === 'photo') return photo(value);
+    if (type === 'photo-pair') return `<div class="photo-pair">${value.map(photo).join('')}</div>`;
     if (type === 'clip') {
       const src = escapeHtml(value.src);
       return `<figure class="film-block"><video controls playsinline preload="none"
