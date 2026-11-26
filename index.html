@@ -90,6 +90,10 @@ nav a[aria-current]::after{content:"";height:2px;background:currentColor;positio
 .about-layout{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:clamp(30px,7vw,92px)}
 .about-text p+p{margin-top:1em}.about-text p{font-size:17px;line-height:1.9}
 .about-text a{text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:.22em}
+.about-credentials{margin-top:24px;border-top:2px solid var(--ink)}
+.about-credentials>div{display:grid;grid-template-columns:5em minmax(0,1fr);gap:12px;padding-block:10px;border-bottom:1px solid var(--line)}
+.about-credentials dt{font-weight:700}.about-credentials dd{color:var(--muted);line-height:1.65}
+.about-credentials dd span{white-space:nowrap}
 #exp{border-top:1px solid var(--line)}
 .experience{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(24px,5vw,64px)}
 .experience h3{font-size:20px;margin-bottom:16px}
@@ -108,7 +112,7 @@ nav a[aria-current]::after{content:"";height:2px;background:currentColor;positio
 .entry-arrow{color:var(--accent);font-size:19px}
 .detail-head{border-bottom:1px solid var(--line);padding-block:26px 34px}
 .back{margin-bottom:20px;font-size:15px}
-.detail-title{margin:8px 0 12px;font-size:clamp(34px,4.2vw,57px)}
+.detail-title{margin:8px 0 12px;font-size:clamp(34px,4.2vw,57px);text-wrap:balance}
 .detail-title .work-name{display:inline-block;max-width:100%}
 .detail-summary{max-width:39em;font-size:clamp(17px,1.6vw,21px);line-height:1.8;color:var(--muted)}
 .detail-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,270px);align-items:start;gap:clamp(28px,6vw,72px);padding-block:38px 60px}
@@ -199,6 +203,78 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
 <!-- 作品資料沿用原有欄位與識別碼。新增作品時，請將新紀錄放在陣列開頭。 -->
 <script type="application/json" id="works-data">
 [
+  {
+    "id":"kindergarten-board-games",
+    "title":"幼兒桌遊課｜下一堂怎麼備",
+    "cat":"教學現場",
+    "date":"2026 年 9–10 月",
+    "cover":"images/kindergarten-table.webp",
+    "coverInfo":{
+      "width":1084,"height":991,
+      "alt":"我戴著眼鏡和口罩，俯身在白色桌上示範怎麼把彩色支柱立起來。",
+      "caption":"幼兒桌遊課現場。我把彩色短柱立在圓盤上。"
+    },
+    "summary":"我每週到竹東帶一小時幼兒桌遊課。從動作卡、智慧扣環到撲克牌，每次換教具之前，都得想想孩子怎麼上手、園方手邊已經有什麼。",
+    "role":"幼兒桌遊授課、準備教具與依現場回饋調整課程",
+    "for":"竹東的幼兒園小組課程，每週 60 分鐘",
+    "body":[
+      ["h","從手邊的小卡開始"],
+      ["p","我以前和職能治療師合作過幼兒課程。後來接到這堂桌遊課，手邊可用的教案和桌遊有限，我就從小卡和現有教具開始，想辦法把它們改成幼兒能直接動手的活動。"],
+      ["h","九月的四堂課"],
+      ["steps",[
+        ["9 月 2 日・動作卡","我自備動作卡，帶孩子做互動遊戲。"],
+        ["9 月 9 日・智慧扣環","當週用合作方提供的教具，讓孩子把不同形狀的彩色環扣在一起。"],
+        ["9 月 16 日・撲克牌翻翻樂","我自備撲克牌。那堂課孩子的反應比我預期冷，園方也希望接下來換一種活動。"],
+        ["9 月 23 日・SomaCube","我帶了智慧積木，才發現園方本來就有同一套。要帶新的活動，得先知道孩子手邊有哪些教具。"]
+      ]],
+      ["photo",{
+        "src":"images/kindergarten-rings.webp","width":1108,"height":551,
+        "alt":"桌面散放著不同顏色和形狀的扣環，一雙手正把扣環串起來。",
+        "caption":"智慧扣環的操作近照。孩子把桌上的彩色扣環一個接一個串起來。"
+      }],
+      ["photo",{
+        "src":"images/kindergarten-flip-cards.webp","width":1072,"height":427,
+        "alt":"兩張白色桌子上，數列卡片背面朝上，分別排在桌面的不同位置。",
+        "caption":"撲克牌翻翻樂的桌面配置。每個桌邊分開排卡。"
+      }],
+      ["h","下一週要帶什麼"],
+      ["p","9 月底和 10 月初，我借到《超級犀牛》，帶了兩次。老師希望換個內容，10 月 14 日我就改用合作方的《卡片偵探》。這幾週讓我在備課時多問兩件事。孩子看完第一次示範，可以先做哪一步？園方已經有哪幾套教具？"]
+    ],
+    "link":null,
+    "related":["trainer-course","dongguan-teaching","schweitzer"]
+  },
+  {
+    "id":"red-fox-magic",
+    "title":"赤狐魔術社｜籌辦慈善晚會",
+    "cat":"表演",
+    "date":"2022–2023 年",
+    "cover":"images/nycu-day-backstage.webp",
+    "coverInfo":{
+      "width":800,"height":800,
+      "alt":"我戴著紅帶高帽站在帳篷下，桌上擺著兩個銀色魔術道具筒。",
+      "caption":"2024 年交大日演出前，我在帳篷下準備道具。"
+    },
+    "summary":"2022 年，清交兩校把慈善魔術晚會帶回演藝廳。我在赤狐第十九屆社長任內送出企畫、協調保險，隔年辦理交接。",
+    "role":"赤狐魔術社第十九屆社長，晚會企畫與活動保險協調",
+    "for":"國立陽明交通大學赤狐魔術社、國立清華大學魔術社",
+    "body":[
+      ["h","讓晚會回到交大演藝廳"],
+      ["p","2022 年 10 月 16 日，赤狐魔術社和清大魔術社在交大光復校區演藝廳合辦慈善晚會。兩校把表演排成上下半場，觀眾免費入場，也可以自由樂捐。"],
+      ["p","籌備時，我把兩校的活動企畫送出，也協調活動保險。企畫以往屆的流程為參考，從開放入場、中場休息，一路排到散場後的場地復原。"],
+      ["h","把魔術帶到演藝廳之外"],
+      ["p","2023 年 3 月，我到心路基金會演出和教魔術。這次在活動空間裡，觀眾就在面前，身邊一個打開的道具箱就是我的工作臺。"],
+      ["photo",{
+        "src":"images/red-fox-community-props.webp","width":938,"height":685,
+        "alt":"黑西裝表演者拿著紅色造型氣球，旁邊的三腳架上放著打開的魔術道具箱。",
+        "caption":"2023 年 3 月 25 日心路基金會公益活動的現場近照。"
+      }],
+      ["h","把社務交給下一屆"],
+      ["p","赤狐魔術社列在校方交大校區 111 學年度績優社團名單裡。2023 年 7 月，我向校方辦理社長交接，讓下一屆接手社務。"],
+      ["source",{"text":"陽明交大歷年績優社團名單","url":"https://osa.nycu.edu.tw/osa/ch/app/artwebsite/doc?detailNo=1197398628558180352&module=artwebsite&type=s"}]
+    ],
+    "link":{"text":"看 2022 清交慈善晚會活動原頁","url":"https://www.accupass.com/event/2209121513091827002366"},
+    "related":["community-magic","magic","hot-door"]
+  },
   {"id":"statue-english","title":"用英語導覽自由女神像","cat":"教案設計","date":"2026 年 11 月","summary":"訪客說錯火炬的位置，導覽員得回到課文找證據，再用一句英文更正。這套高一教案把閱讀、說明與臨場追問放進同一個任務。","role":"設計五節課、微型試教與評量，與 AI 協作製作板書圖及學習單","for":"高中一年級，每節 50 分鐘","body":[["h","讓兩個人都當一次導覽員"],["p","我先請學生指給同桌看：自由女神像哪隻手拿火炬，哪隻手拿石板？接著回到課本，一個人找石板，一個人找火炬，各自圈出物件、框住訊號詞，再畫出能支持答案的片語。"],["steps",[["先找線索","用圖和課文核對部位與意義。示範完一個例子，兩位學生各去找自己負責的線索。"],["再換角色","訪客故意說錯一處，導覽員先用英文更正。訪客追問 How do you know? 時，就指出書上支持回答的線索。"],["各自留一筆","交換角色後，每人留下自己的更正句。收回來可以分辨他卡在讀懂內容、找證據，還是把知道的事寫成一句話。"]]],["h","試做第二節的更正題"],["practice",{"prompt":"The United States became independent in 1886, right?","instruction":"訪客說錯了年份。用 It was … that … 開頭，試著把正確的日期說出來。","label":"看一個參考答案","answer":"It was on July 4, 1776, that the United States became independent.","note":"強調句把要更正的日期放在 It was 後面，that 後面說明發生了什麼。"}],["h","從課本標記到自己的導覽"],["p","v4.14 把同一份學習單串進五節課。第二節先做更正與引證，到了第五節，每人寫四到五句英文導覽，再回答同伴的追問。我用首答、同桌互問和最後的導覽稿設計評量。"]],"link":null,"related":["grammar-magic","word-review","market-english"],"cover":"images/statue-of-liberty-board.webp","coverInfo":{"width":1280,"height":720,"alt":"深綠色板書，把原書標記、日期強調句與兩人分工放在三欄，最後一欄是更正訪客的練習。","caption":"v4.14 的最後一張試教板書圖。學生先寫自己的更正，核對後才在右欄補上完整的日期與句子。","href":"images/statue-of-liberty-board.webp","linkText":"放大試教板書"}},
   {"id":"comparison-writing","title":"這句話，在比什麼？","cat":"教學網站","date":"2026 年 11 月","summary":"讀到一句不清楚的比較，我把原句和改寫並排，讓同學自己找出 than 兩側究竟在比什麼。","role":"整理原文與改寫步驟，與 AI 協作製作離線投影網站","for":"W234 高級寫作課堂報告","body":[["h","讀一句比較句，先看兩邊"],["p","高級寫作讀到 Claire Kehrwald Cook 的《Line by Line》時，我想把她的改寫拆成台下看得見的步驟。先請同學判讀原句，再展開修訂。這時可以停在同一個畫面，指出補上的字，也可以回去看上一個版本。"],["h","先用一個自編例句試試"],["practice",{"prompt":"The gym’s hours are longer than the library.","instruction":"照這句寫法，than 左右各是什麼？想一下，再展開改寫。","label":"看改寫與原因","answer":"The gym’s hours are longer than the library’s.","note":"比較的是兩邊的開放時間。library’s 讓讀者補出 the library’s hours。"}],["h","讓全班看到同一步"],["p","課堂版把暖身、舊車貸款的改寫、Mill 的四步修訂和課末小測排成導覽。投影時先停在原句，下一步才顯示改寫和變動處。把它做成單一離線網頁，教室沒連網也能直接開。"]],"link":null,"related":["statue-english","tone-contours"],"cover":"images/comparison-workshop.webp","coverInfo":{"width":1098,"height":546,"alt":"比較句工具的暖身畫面。原句把健身房的開放時間和圖書館相比，改寫後用所有格補出圖書館的開放時間。","caption":"離線網站操作畫面，換入自編例句後，對照原句、改寫和省略的內容。"}},
   {"id":"word-parts","title":"遇到新單字，先把它拆開","cat":"教學現場","date":"2026 年 10 月","summary":"有一回公益課輔拿到〈Sunflower〉的雙語歌詞，我用 needless 帶學生拆字。等同一個字再出現，就換學生自己說意思。","role":"公益英語課輔、詞彙引導","for":"公益課輔現場","body":[["h","先圈住認得的那一半"],["p","那天我臨時拿到英文、中文各一欄的歌詞教材。我先把相對應的字詞圈起來，帶學生看 needless 裡面有沒有認得的字。need 是「需要」，加上表示「沒有、缺少」的 -less，就能猜到「不必要的」。"],["h","等它再出現，換學生開口"],["p","歌裡同一個詞會再出現。我把解釋留一下，改問：「剛剛認出哪一段？這裡可以怎麼說？」那天旁邊一起帶課的同學也用了這個問法，去問另一位學生。"],["practice",{"prompt":"hope + -less = ?","instruction":"如果 hope 是「希望」，你會怎麼猜合起來的意思？","label":"看拆解","answer":"hope + -less → hopeless","note":"這裡可理解為「沒有希望的」。這是從課堂做法延伸的練習。"}]],"link":null,"related":["word-review","statue-english"],"cover":"images/word-parts-needless.webp","coverInfo":{"width":1200,"height":640,"alt":"三張字卡示意 need 是需要，-less 表示沒有或缺少，needless 是不必要的。","caption":"依當時的講法重畫的字卡。先圈出已經認得的 need，再看字尾怎麼改變意思。"}},
@@ -284,8 +360,13 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
   <section class="section wrap about-layout" id="do" aria-labelledby="about-title">
     <h2 class="section-title" id="about-title" tabindex="-1">關於我</h2>
     <div class="about-text">
-      <p>我從幼兒園教到高中，教過英文、化學，也帶過魔術、3D 筆、競速疊杯和魔方課。寫教案時，我習慣先問自己，學生已經會什麼？這裡要我先示範，還是可以把道具交給他試試看？</p>
+      <p>我從幼兒園教到高中，教過英文、化學，也帶過<a href="#work-kindergarten-board-games">幼兒桌遊</a>、魔術、3D 筆、競速疊杯和魔方課。寫教案時，我習慣先問自己，學生已經會什麼？這裡要我先示範，還是可以把道具交給他試試看？</p>
       <p><a href="#work-trainer-course">伯樂教育</a>是我人生裡很重要的一個里程碑。以前站上台試教，我在意的是自己這堂課能不能教好。後來錄師培課，我連「走進教室的第一句話怎麼說」都得拆開來講，讓第一次帶班的老師也有辦法試。</p>
+      <dl class="about-credentials">
+        <div><dt>授課時數</dt><dd>截至 2026 年 8 月，累計授課<span>逾 600 小時</span></dd></div>
+        <div><dt>師培獎學金</dt><dd>陽明交大 <span>115 學年度</span> <span>師資培育獎學金受獎生</span></dd></div>
+        <div><dt>英文檢定</dt><dd>培力英檢 <span>BESTEP（2026）</span> <span>閱讀、口說 C1</span>，<span>聽力、寫作 B2+</span>。<span>全民英檢中高級</span>聽說讀寫通過。</dd></div>
+      </dl>
     </div>
   </section>
 
@@ -307,6 +388,7 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
         <div><dt>清交教育學程小梅竹</dt><dd>2024 年試教比賽第一名、2026 年教案展演第三名</dd></div>
         <div><dt>新竹市街頭藝人證</dt><dd>表演藝術類・魔術表演<br><a class="body-link" href="https://busker.culture.tw/hsinchucity/performer/detail?performerId=35729">羊羊的官方登記</a></dd></div>
         <div><dt>2024 站立風城喜劇爭霸賽</dt><dd>前哨戰並列冠軍</dd></div>
+        <div><dt>陽明交大赤狐魔術社</dt><dd><a class="body-link" href="#work-red-fox-magic">第十九屆社長，清交慈善魔術晚會企畫與協調</a></dd></div>
         <div><dt>陽明交大貢丸喜劇社</dt><dd>創社社長、單口喜劇演出</dd></div>
       </dl></div>
     </div>
@@ -383,7 +465,7 @@ section[id],footer[id],h1,h2,main{scroll-margin-block-start:86px}
     filters.append(button);
   }
   filterWorks(allLabel);
-  const fieldIds = ['statue-english','comparison-writing','word-parts','chem-site','schweitzer','stage-hosting'];
+  const fieldIds = ['kindergarten-board-games','red-fox-magic','statue-english','comparison-writing','word-parts','chem-site','schweitzer','stage-hosting'];
   document.getElementById('field-grid').innerHTML = fieldIds.map(id => tile(worksById.get(id), 'h3')).join('');
 
   function filmPoster(id) {
